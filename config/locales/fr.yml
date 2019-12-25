@@ -21,6 +21,10 @@ fr:
               confirmation: "La confirmation et le mot de passe ne correspondent pas"
             username:
               invalid: "Le nom d'utilisateur est invalide"
+        story:
+          attributes:
+            title:
+              too_long: "Le titre est trop long"
   hats:
     index:
       hatstitle: "Chapeaux"
