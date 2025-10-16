@@ -24,6 +24,9 @@ gem "commonmarker", "~> 0.14"
 
 gem "activerecord-typedstore"
 
+# Use Psych 3.3+ for permitted_classes support with Rails 5.2.8.1
+gem 'psych', '~> 3.3'
+
 # for twitter-posting bot
 gem "oauth"
 

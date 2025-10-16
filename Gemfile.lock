@@ -115,6 +115,7 @@ GEM
       version_gem (~> 1.1, >= 1.1.9)
     oauth-tty (1.0.6)
       version_gem (~> 1.1, >= 1.1.9)
+    psych (3.3.4)
     racc (1.8.1)
     rack (2.2.20)
     rack-test (2.2.0)
@@ -215,6 +216,7 @@ DEPENDENCIES
   mysql2 (>= 0.4.10, < 0.6)
   nokogiri (>= 1.10.0)
   oauth
+  psych (~> 3.3)
   rails (~> 5.2, >= 5.2.8)
   rotp
   rqrcode
