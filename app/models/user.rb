@@ -33,7 +33,8 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  typed_store :settings do |s|
+  # Use JSON coder instead of YAML to avoid Psych 3.0 compatibility issues with Rails 5.2.8.1
+  typed_store :settings, coder: ActiveRecord::Coders::JSON do |s|
     s.boolean :email_notifications, :default => false
     s.boolean :email_replies, :default => false
     s.boolean :pushover_replies, :default => false

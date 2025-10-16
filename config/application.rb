@@ -32,7 +32,8 @@ module Lobsters
 
     # Rails 5.2.8.1+ requires permitted classes for YAML deserialization (CVE-2022-32224)
     # Required for activerecord-typedstore gem
-    config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, DateTime, ActiveSupport::HashWithIndifferentAccess]
+    config.active_record.yaml_column_permitted_classes ||= []
+    config.active_record.yaml_column_permitted_classes += [Symbol, Date, Time, DateTime, ActiveSupport::HashWithIndifferentAccess, BigDecimal]
 
     config.after_initialize do
       require "#{Rails.root}/lib/monkey.rb"
