@@ -1,0 +1,27 @@
+development:
+  adapter: mysql2
+  encoding: utf8mb4
+  reconnect: false
+  database: journalduhacker_dev
+  pool: 5
+  username: journalduhacker
+  password: journalduhacker
+  host: db
+  port: 3306
+
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: mysql2
+  encoding: utf8mb4
+  reconnect: false
+  database: journalduhacker_prod
+  pool: 25
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['DATABASE_HOST'] || 'db' %>
+  port: <%= ENV['DATABASE_PORT'] || 3306 %>
