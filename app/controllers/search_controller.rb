@@ -21,7 +21,8 @@ class SearchController < ApplicationController
       if @search.valid?
         begin
           @search.search_for_user!(@user)
-        rescue ThinkingSph::ConnectionError
+        rescue => e
+          Rails.logger.error("Search error: #{e.message}")
           flash[:error] = I18n.t 'controllers.search_controller.flasherrorsearchcontroller'
         end
       end

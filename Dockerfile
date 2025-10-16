@@ -16,7 +16,6 @@ RUN apt-get update -qq && \
     libxml2-dev \
     libxslt1-dev \
     nodejs \
-    sphinxsearch \
     default-mysql-client \
     git \
     && rm -rf /var/lib/apt/lists/*
