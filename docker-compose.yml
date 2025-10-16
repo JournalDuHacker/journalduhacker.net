@@ -16,9 +16,9 @@ services:
   web:
     build: .
     command: bash -c "bundle exec rake db:migrate && bundle exec rails server -b 0.0.0.0"
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
+#    volumes:
+#      - .:/app
+#      - bundle_cache:/usr/local/bundle
     ports:
       - "3000:3000"
     depends_on:
