@@ -45,5 +45,4 @@ Thumbs.db
 spec/tmp/
 
 # Bundler
-Gemfile.lock
 vendor/bundle/
