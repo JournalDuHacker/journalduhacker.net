@@ -28,16 +28,14 @@ RUN apt-get update -qq && \
 # Set working directory
 WORKDIR /app
 
-# Copy application code
+# Copy only Gemfile first (better caching)
+COPY Gemfile ./
+
+# Install gems - this will generate Gemfile.lock with Rails 5.2
+RUN bundle install --jobs 4 --retry 3
+
+# Now copy the rest of the application code
 COPY . .
-
-#TODO: Remove this line
-RUN bundle update rails
-# Update nokogiri to fix build issues, then install all gems
-RUN bundle update nokogiri && bundle install --jobs 4 --retry 3
-
-#TODO: Remove this line
-RUN bundle --full-index
 
 # Expose port 3000
 EXPOSE 3000

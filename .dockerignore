@@ -44,3 +44,7 @@ Thumbs.db
 
 # Test
 spec/tmp/
+
+# Bundler
+Gemfile.lock
+vendor/bundle/
