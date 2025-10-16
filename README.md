@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-journalduhacker.net-green.svg)](https://www.journalduhacker.net)
 
-[Site web](https://www.journalduhacker.net) • [Contribuer](#-contributing) • [Documentation](#-documentation)
+[Site web](https://www.journalduhacker.net) • [Contribuer](#-contributing)
 
 </div>
 
@@ -221,27 +221,6 @@ Les contributions sont les bienvenues ! Voici comment participer :
 - Utilise des messages de commit descriptifs
 
 Pour plus de détails, consulte [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## 📚 Documentation
-
-### Configuration de production
-
-Pour un déploiement en production, pense à :
-
-- Utiliser un reverse proxy (nginx, Apache)
-- Configurer SSL/TLS
-- Mettre en place des backups automatiques de la base de données
-- Configurer les emails (SMTP)
-- Activer le cache (Redis recommandé)
-- Configurer les variables d'environnement sensibles
-
-### Customisation
-
-- **CSS personnalisé** : Place tes styles dans `app/assets/stylesheets/local/`
-- **Logo** : Remplace les images dans `app/assets/images/`
-- **Traductions** : Modifie `config/locales/fr.yml`
 
 ---
 
