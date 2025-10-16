@@ -29,12 +29,12 @@ var _Lobsters = Class.extend({
     if (li.hasClass("hidden")) {
       act = "unhide";
       li.removeClass("hidden");
-      hiderEl.innerHTML = "révéler";
+      hiderEl.innerHTML = "masquer";
     }
     else {
       act = "hide";
       li.addClass("hidden");
-      hiderEl.innerHTML = "masquer";
+      hiderEl.innerHTML = "révéler";
     }
 
     $.post("/stories/" + li.attr("data-shortid") + "/" + act);
