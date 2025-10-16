@@ -37,5 +37,3 @@ group :test, :development do
   gem "sqlite3", "~> 1.3.6"
   gem "faker"
 end
-
-gem 'piwik_analytics', '~> 1.0.1'
