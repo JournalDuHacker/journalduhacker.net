@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+log/*
+tmp/*
+
+# Database
+*.sqlite3
+db/*.sqlite3
+
+# Environment
+.env
+.env.*
+
+# Config files with secrets
+config/database.yml
+config/initializers/secret_token.rb
+
+# Node modules
+node_modules/
+
+# Assets
+public/assets/
+
+# Coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+spec/tmp/

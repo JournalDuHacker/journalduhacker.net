@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mariadb:10.1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: journalduhacker_dev
+      MYSQL_USER: journalduhacker
+      MYSQL_PASSWORD: journalduhacker
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./tmp:/tmp
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  sphinx:
+    image: macbre/sphinxsearch:3.3.1
+    volumes:
+      - ./config:/opt/sphinx/conf
+      - sphinx_data:/opt/sphinx/index
+    depends_on:
+      - db
+    command: sh -c "searchd --nodetach"
+
+  web:
+    build: .
+    command: bash -c "bundle exec rake db:create db:schema:load db:seed && bundle exec rails server -b 0.0.0.0"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - sphinx
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: journalduhacker
+      DATABASE_PASSWORD: journalduhacker
+      DATABASE_NAME: journalduhacker_dev
+      RAILS_ENV: development
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql_data:
+  sphinx_data:
+  sphinx_log:
+  bundle_cache:
