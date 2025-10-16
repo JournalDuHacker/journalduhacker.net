@@ -1,13 +1,13 @@
-# Ruby 2.4.10 est la dernière version 2.4.x et la plus sûre pour Rails 4.2.8
-FROM ruby:2.4.10
+# Ruby 2.5.9 est compatible avec Rails 5.2
+FROM ruby:2.5.9
 
 # OCI Image labels
 LABEL org.opencontainers.image.source=https://github.com/flemzord/journalduhacker.net
 LABEL org.opencontainers.image.description="Journal du Hacker - A Hacker News like platform for French-speaking developers"
 LABEL org.opencontainers.image.licenses=AGPL
 
-# Install bundler compatible avec Ruby 2.4
-RUN gem install bundler -v 1.17.3 --no-document
+# Install bundler compatible avec Ruby 2.5
+RUN gem install bundler -v 2.3.26 --no-document
 
 # Fix Debian Buster archived repositories
 RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \

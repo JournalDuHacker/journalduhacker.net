@@ -26,8 +26,6 @@ module Lobsters
     # Raise an exception when using mass assignment with unpermitted attributes
     config.action_controller.action_on_unpermitted_parameters = :raise
 
-    config.active_record.raise_in_transactional_callbacks = true
-
     config.cache_store = :file_store, "#{config.root}/tmp/cache/"
 
     config.exceptions_app = self.routes
@@ -36,11 +34,6 @@ module Lobsters
       require "#{Rails.root}/lib/monkey.rb"
     end
   end
-end
-
-# disable yaml/xml/whatever input parsing
-silence_warnings do
-  ActionDispatch::ParamsParser::DEFAULT_PARSERS = {}
 end
 
 # define site name and domain to be used globally, should be overridden in a
