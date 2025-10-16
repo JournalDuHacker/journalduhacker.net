@@ -11,7 +11,6 @@ gem "mysql2", ">= 0.4.10", "< 0.6"
 
 gem "uglifier", ">= 1.3.0"
 gem "jquery-rails"
-gem "dynamic_form"
 
 gem "exception_notification"
 

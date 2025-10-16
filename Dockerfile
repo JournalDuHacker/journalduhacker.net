@@ -31,8 +31,13 @@ WORKDIR /app
 # Copy application code
 COPY . .
 
+#TODO: Remove this line
+RUN bundle update rails
 # Update nokogiri to fix build issues, then install all gems
 RUN bundle update nokogiri && bundle install --jobs 4 --retry 3
+
+#TODO: Remove this line
+RUN bundle --full-index
 
 # Expose port 3000
 EXPOSE 3000
