@@ -18,33 +18,15 @@ class HomeController < ApplicationController
 
 
   def about
-    begin
-      @title = I18n.t 'controllers.home_controller.abouttitle'
-      render :action => "about"
-    rescue ActionView::MissingTemplate
-      render :text => I18n.t('controllers.home_controller.abouttext'), :layout => "application"
-    end
+    @title = I18n.t 'controllers.home_controller.abouttitle'
   end
 
   def chat
-    begin
-      @title = I18n.t 'controllers.home_controller.chattitle'
-      render :action => "chat"
-    rescue ActionView::MissingTemplate
-      render :text => "<div class=\"box wide\">" <<
-        "<div class=\"legend\">Chat</div>" <<
-        "Keep it on-site" <<
-        "</div>", :layout => "application"
-    end
+    @title = I18n.t 'controllers.home_controller.chattitle'
   end
 
   def privacy
-    begin
-      @title = I18n.t 'controllers.home_controller.privacytitle'
-      render :action => "privacy"
-    rescue ActionView::MissingTemplate
-      render :text => I18n.t('controllers.home_controller.licensetext'), :layout => "application"
-    end
+    @title = I18n.t 'controllers.home_controller.privacytitle'
   end
 
   def hidden
