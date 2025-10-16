@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :authenticate_user
-  before_filter :increase_traffic_counter
+  before_action :authenticate_user
+  before_action :increase_traffic_counter
 
   TRAFFIC_DECREMENTER = 0.40
 

@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :require_logged_in_moderator,
+  before_action :require_logged_in_moderator,
     :only => [ :enable_invitation, :disable_invitation, :ban, :unban ]
 
   def show
