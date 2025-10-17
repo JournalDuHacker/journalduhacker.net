@@ -4,7 +4,7 @@ class Tag < ApplicationRecord
   has_many :stories,
     through: :taggings
 
-  attr_accessor :stories_count
+  attr_accessor :stories_count, :filtered_count
 
   scope :active, -> { where(inactive: false) }
 
@@ -40,9 +40,5 @@ class Tag < ApplicationRecord
     else
       true
     end
-  end
-
-  def filtered_count
-    @filtered_count ||= TagFilter.where(tag_id: id).count
   end
 end
