@@ -33,6 +33,40 @@ module ApplicationHelper
     raw(html)
   end
 
+  # Replacement for dynamic_form's error_messages_for
+  # Displays validation errors in a formatted div with the errorExplanation class
+  def error_messages_for(object, options = {})
+    return "" if object.errors.empty?
+
+    object_name = options[:object_name] || object.class.model_name.human.downcase
+    count = object.errors.count
+    header_message = options[:header_message] || I18n.t(
+      "activerecord.errors.template.header",
+      count: count,
+      model: object_name,
+      default: "#{count} #{count == 1 ? 'error' : 'errors'} prohibited this #{object_name} from being saved"
+    )
+    message = options[:message] || I18n.t(
+      "activerecord.errors.template.body",
+      default: "There were problems with the following fields:"
+    )
+
+    html = <<-HTML
+      <div class="errorExplanation" id="errorExplanation">
+        <h2>#{header_message}</h2>
+        <p>#{message}</p>
+        <ul>
+    HTML
+
+    object.errors.full_messages.each do |msg|
+      html << "<li>#{ERB::Util.html_escape(msg)}</li>\n"
+    end
+
+    html << "</ul></div>"
+
+    raw(html)
+  end
+
   def page_numbers_for_pagination(max, cur)
     if max <= MAX_PAGES
       return (1 .. max).to_a

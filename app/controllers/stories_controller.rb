@@ -1,12 +1,12 @@
 class StoriesController < ApplicationController
-  before_filter :require_logged_in_user_or_400,
+  before_action :require_logged_in_user_or_400,
     :only => [ :upvote, :downvote, :unvote, :hide, :unhide, :preview ]
-  before_filter :require_logged_in_user, :only => [ :destroy, :create, :edit,
+  before_action :require_logged_in_user, :only => [ :destroy, :create, :edit,
     :fetch_url_attributes, :new, :suggest ]
-  before_filter :verify_user_can_submit_stories, :only => [ :new, :create ]
-  before_filter :find_user_story, :only => [ :destroy, :edit, :undelete,
+  before_action :verify_user_can_submit_stories, :only => [ :new, :create ]
+  before_action :find_user_story, :only => [ :destroy, :edit, :undelete,
     :update ]
-  before_filter :find_story!, :only => [ :suggest, :submit_suggestions ]
+  before_action :find_story!, :only => [ :suggest, :submit_suggestions ]
 
   def create
     @title = I18n.t 'controllers.stories_controller.submitstorytitle'

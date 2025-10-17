@@ -8,6 +8,8 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+RSpec::Expectations.configuration.on_potential_false_positives = :nothing
+
 RSpec.configure do |config|
   # ## Mock Framework
   #

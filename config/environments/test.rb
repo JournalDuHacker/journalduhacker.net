@@ -38,4 +38,4 @@ Lobsters::Application.configure do
   config.action_view.raise_on_missing_translations = true
 end
 
-RSpec::Expectations.configuration.on_potential_false_positives = :nothing
+# RSpec::Expectations.configuration.on_potential_false_positives = :nothing

@@ -1,17 +1,16 @@
 source "https://rubygems.org"
 
-gem "rails", "4.2.8"
+gem 'rails', '~> 5.2', '>= 5.2.8'
 
 gem "unicorn"
 
-gem "mysql2", ">= 0.4.10"
+gem "mysql2", ">= 0.4.10", "< 0.6"
 
 # uncomment to use PostgreSQL
 # gem "pg"
 
 gem "uglifier", ">= 1.3.0"
 gem "jquery-rails"
-gem "dynamic_form"
 
 gem "exception_notification"
 
@@ -19,11 +18,14 @@ gem "bcrypt", "~> 3.1.2"
 gem "rotp"
 gem "rqrcode"
 
-gem "nokogiri", "~> 1.8.5"
+gem "nokogiri", ">= 1.10.0"
 gem "htmlentities"
 gem "commonmarker", "~> 0.14"
 
 gem "activerecord-typedstore"
+
+# Use Psych 3.3+ for permitted_classes support with Rails 5.2.8.1
+gem 'psych', '~> 3.3'
 
 # for twitter-posting bot
 gem "oauth"
@@ -32,10 +34,8 @@ gem "oauth"
 gem "mail"
 
 group :test, :development do
-  gem "rspec-rails", "~> 3.5", ">= 3.5.2"
+  gem "rspec-rails", "~> 3.8"
   gem "machinist"
-  gem "sqlite3"
+  gem "sqlite3", "~> 1.3.6"
   gem "faker"
 end
-
-gem 'piwik_analytics', '~> 1.0.1'

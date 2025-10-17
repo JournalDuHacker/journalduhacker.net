@@ -20,7 +20,6 @@ db/*.sqlite3
 .env.*
 
 # Config files with secrets
-config/database.yml
 config/initializers/secret_token.rb
 
 # Node modules
@@ -44,3 +43,6 @@ Thumbs.db
 
 # Test
 spec/tmp/
+
+# Bundler
+vendor/bundle/
