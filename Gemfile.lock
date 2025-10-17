@@ -89,6 +89,7 @@ GEM
     crass (1.0.6)
     date (3.4.1)
     diff-lcs (1.6.2)
+    docile (1.4.1)
     drb (2.2.3)
     erb (5.1.1)
     erubi (1.13.1)
@@ -266,6 +267,12 @@ GEM
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.2)
+    simplecov_json_formatter (0.1.4)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
     snaky_hash (2.0.3)
@@ -336,6 +343,7 @@ DEPENDENCIES
   rotp
   rqrcode
   rspec-rails (~> 6.0)
+  simplecov
   sitemap_generator
   sprockets-rails
   sqlite3 (~> 1.4)

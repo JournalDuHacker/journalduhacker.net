@@ -33,3 +33,4 @@ config/initializers/production.rb
 config/initializers/secret_token.rb
 config/*.sphinx.conf
 config/unicorn.conf.rb
+coverage

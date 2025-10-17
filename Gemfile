@@ -49,4 +49,5 @@ group :test, :development do
   gem "faker"
   gem "listen", "~> 3.2"
   gem "standard", require: false
+  gem "simplecov", require: false
 end
