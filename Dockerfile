@@ -1,18 +1,13 @@
-# Ruby 2.5.9 est compatible avec Rails 5.2
-FROM ruby:2.5.9
+# Ruby 3.1.4 est compatible avec Rails 6.1 et Rails 7.0
+FROM ruby:3.1.4
 
 # OCI Image labels
 LABEL org.opencontainers.image.source=https://github.com/flemzord/journalduhacker.net
 LABEL org.opencontainers.image.description="Journal du Hacker - A Hacker News like platform for French-speaking developers"
 LABEL org.opencontainers.image.licenses=AGPL
 
-# Install bundler compatible avec Ruby 2.5
+# Install bundler
 RUN gem install bundler -v 2.3.26 --no-document
-
-# Fix Debian Buster archived repositories
-RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
-    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
-    sed -i '/stretch-updates/d' /etc/apt/sources.list
 
 # Install dependencies
 RUN apt-get update -qq && \

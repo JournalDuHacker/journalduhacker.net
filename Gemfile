@@ -1,18 +1,24 @@
 source "https://rubygems.org"
 
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 7.0.0'
+
+# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
+gem "sprockets-rails"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.4.2", require: false
 
-gem "unicorn"
+# Use the Puma web server [https://github.com/puma/puma]
+gem "puma", "~> 5.0"
 
-gem "mysql2", ">= 0.4.10", "< 0.6"
+gem "mysql2", ">= 0.5.4", "< 0.6"
 
 # uncomment to use PostgreSQL
 # gem "pg"
 
-gem "uglifier", ">= 1.3.0"
+# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
+gem "importmap-rails"
+
 gem "jquery-rails"
 
 gem "exception_notification"
@@ -27,9 +33,6 @@ gem "commonmarker", "~> 0.21"
 
 gem "activerecord-typedstore"
 
-# Use Psych for YAML serialization
-gem 'psych', '~> 3.3'
-
 # for twitter-posting bot
 gem "oauth"
 
@@ -37,7 +40,7 @@ gem "oauth"
 gem "mail"
 
 group :test, :development do
-  gem "rspec-rails", "~> 4.0"
+  gem "rspec-rails", "~> 6.0"
   gem "machinist"
   gem "sqlite3", "~> 1.4"
   gem "faker"
