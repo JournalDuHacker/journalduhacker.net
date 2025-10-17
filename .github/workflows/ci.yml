@@ -9,9 +9,30 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.1
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: journalduhacker_test
+          MYSQL_USER: journalduhacker
+          MYSQL_PASSWORD: journalduhacker
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
       RAILS_ENV: test
       BUNDLE_WITHOUT: "production"
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_USER: journalduhacker
+      DATABASE_PASSWORD: journalduhacker
+      DATABASE_NAME: journalduhacker_test
 
     steps:
       - name: Checkout repository
