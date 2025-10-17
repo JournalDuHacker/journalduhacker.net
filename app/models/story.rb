@@ -2,7 +2,8 @@ class Story < ApplicationRecord
   belongs_to :user
   belongs_to :merged_into_story,
     :class_name => "Story",
-    :foreign_key => "merged_story_id"
+    :foreign_key => "merged_story_id",
+    :optional => true
   has_many :merged_stories,
     :class_name => "Story",
     :foreign_key => "merged_story_id"

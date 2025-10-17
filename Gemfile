@@ -1,6 +1,9 @@
 source "https://rubygems.org"
 
-gem 'rails', '~> 5.2', '>= 5.2.8'
+gem 'rails', '~> 6.0.0'
+
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", ">= 1.4.2", require: false
 
 gem "unicorn"
 
@@ -20,11 +23,11 @@ gem "rqrcode"
 
 gem "nokogiri", ">= 1.10.0"
 gem "htmlentities"
-gem "commonmarker", "~> 0.14"
+gem "commonmarker", "~> 0.21"
 
 gem "activerecord-typedstore"
 
-# Use Psych 3.3+ for permitted_classes support with Rails 5.2.8.1
+# Use Psych for YAML serialization
 gem 'psych', '~> 3.3'
 
 # for twitter-posting bot
@@ -34,8 +37,9 @@ gem "oauth"
 gem "mail"
 
 group :test, :development do
-  gem "rspec-rails", "~> 3.8"
+  gem "rspec-rails", "~> 4.0"
   gem "machinist"
-  gem "sqlite3", "~> 1.3.6"
+  gem "sqlite3", "~> 1.4"
   gem "faker"
+  gem "listen", "~> 3.2"
 end
