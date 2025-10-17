@@ -272,7 +272,6 @@ class CommentsController < ApplicationController
       @heading = @title = "Threads for #{@showing_user.username}"
       @cur_url = "/threads/#{@showing_user.username}"
     elsif !@user
-      # TODO: show all recent threads
       return redirect_to "/login"
     else
       @showing_user = @user
@@ -304,18 +303,6 @@ class CommentsController < ApplicationController
         end
       end
     end
-
-    # trim each thread to this user's first response
-    # XXX: busted
-    #@threads.each do |th|
-    #  th.each do |c|
-    #    if c.user_id == @user.id
-    #      break
-    #    else
-    #      th.shift
-    #    end
-    #  end
-    #end
   end
 
 private

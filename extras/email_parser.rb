@@ -96,9 +96,6 @@ class EmailParser
       @body = self.email.body.to_s
     end
 
-    # TODO: use @possible_charset, but did previously forcing the entire
-    # email_text to utf8 screw this up already?
-
     # try to remove sig lines
     @body.gsub!(/^-- \n.+\z/m, "")
 

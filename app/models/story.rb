@@ -488,7 +488,6 @@ class Story < ApplicationRecord
   end
 
   def merged_comments
-    # TODO: make this a normal has_many?
     Comment.where(:story_id => Story.select(:id).
       where(:merged_story_id => self.id) + [ self.id ])
   end
@@ -574,7 +573,6 @@ class Story < ApplicationRecord
     st.reload
 
     new_tag_names_a.each do |tag_name|
-      # XXX: AR bug? st.exists?(:tag => tag_name) does not work
       if tag_name.to_s != "" && !st.map{|x| x.tag.tag }.include?(tag_name)
         if (t = Tag.active.where(:tag => tag_name).first) &&
         t.valid_for?(user)

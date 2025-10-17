@@ -11,7 +11,6 @@ class StoryCacher
       return
     end
 
-    # XXX: diffbot tries to read pdfs as text, so disable for now
     if story.url.to_s.match(/\.pdf$/i)
       return nil
     end

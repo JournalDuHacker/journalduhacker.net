@@ -83,7 +83,6 @@ class Message < ApplicationRecord
   end
 
   def plaintext_body
-    # TODO: linkify then strip tags and convert entities back
     self.body.to_s
   end
 

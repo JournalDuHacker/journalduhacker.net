@@ -416,7 +416,6 @@ class Comment < ApplicationRecord
   end
 
   def plaintext_comment
-    # TODO: linkify then strip tags and convert entities back
     comment
   end
 
