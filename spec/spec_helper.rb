@@ -1,4 +1,11 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
+
+# Monkey patch for Ruby 3.x compatibility with Machinist
+# In Ruby 3.x, Fixnum was merged into Integer
+unless defined?(Fixnum)
+  Fixnum = Integer
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require File.expand_path("../../config/environment", __FILE__)
 require "rspec/rails"
