@@ -30,21 +30,14 @@
 - **Database**: MariaDB 10.1 (test environment)
 - **Web Server**: Puma 5.6.9
 
-## Deprecation Warnings (Non-blocking)
+## Deprecation Warnings
 
-### 1. RSpec Autorun
-```
-Requiring `rspec/autorun` when running RSpec via the `rspec` command is deprecated.
-```
-**Impact**: None - Can be safely ignored or fixed later
+✅ **No deprecation warnings** - All RSpec syntax has been modernized!
 
-### 2. RSpec Should Syntax
-```
-Using `should` from rspec-expectations' old `:should` syntax without explicitly
-enabling the syntax is deprecated. Use the new `:expect` syntax instead.
-```
-**Impact**: None - Old syntax still works, modern syntax preferred
-**Location**: `spec/helpers/application_helper_spec.rb:6`
+Previous warnings have been resolved:
+- ✅ Removed `require 'rspec/autorun'` from spec_helper.rb
+- ✅ Converted all `.should` syntax to modern `expect()` syntax
+- ✅ All 8 spec files updated to RSpec 6.x standards
 
 ## Test Categories Coverage
 
