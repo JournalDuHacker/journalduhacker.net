@@ -19,11 +19,6 @@ test:
   password: "<%= ENV['DATABASE_PASSWORD'] %>"
   host: "<%= ENV['DATABASE_HOST'] || 'db' %>"
   port: <%= ENV['DATABASE_PORT'] || 3306 %>
-  # Performance optimizations for tests
-  variables:
-    innodb_flush_log_at_trx_commit: 2  # Don't flush to disk on every commit
-    sync_binlog: 0                      # Don't sync binlog (tests only!)
-    innodb_buffer_pool_size: 1G         # More memory for InnoDB
 
 production:
   adapter: mysql2
