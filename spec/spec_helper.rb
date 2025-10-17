@@ -55,4 +55,11 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
 
   config.infer_spec_type_from_file_location!
+
+  # Create required tags once before the entire test suite
+  config.before(:suite) do
+    Tag.destroy_all
+    Tag.create!(tag: "tag1", description: "Tag 1")
+    Tag.create!(tag: "tag2", description: "Tag 2")
+  end
 end
