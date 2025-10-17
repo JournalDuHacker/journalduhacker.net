@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'rails', '~> 8.0.0'
+gem "rails", "~> 8.0.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -45,4 +45,5 @@ group :test, :development do
   gem "sqlite3", "~> 1.4"
   gem "faker"
   gem "listen", "~> 3.2"
+  gem "standard", require: false
 end

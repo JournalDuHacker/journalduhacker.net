@@ -1,0 +1,17 @@
+# Configuration StandardRB pour Journal du Hacker
+# StandardRB détecte automatiquement Rails et applique les règles appropriées
+
+# Format de sortie (progress, simple, files, offenses, worst, html, json, junit, pacman)
+# format: progress
+
+# Exécution parallèle pour de meilleures performances
+parallel: true
+
+# Ignorer certains fichiers ou répertoires
+ignore:
+  - 'db/schema.rb'
+  - 'db/migrate/**/*'
+  - 'node_modules/**/*'
+  - 'vendor/**/*'
+  - 'bin/**/*'
+  - 'tmp/**/*'

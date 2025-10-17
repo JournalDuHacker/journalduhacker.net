@@ -60,10 +60,33 @@ jobs:
       - name: Run test suite
         run: bundle exec rspec
 
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      BUNDLE_WITHOUT: "production"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsqlite3-dev libxml2-dev libxslt1-dev pkg-config
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run lint
+        run: bundle exec standardrb
+
   build-and-push:
     runs-on: ubuntu-latest
     needs:
       - rspec
+      - lint
     permissions:
       contents: read
       packages: write
