@@ -1,5 +1,5 @@
-# Ruby 3.1.4 est compatible avec Rails 6.1 et Rails 7.0
-FROM ruby:3.1.4
+# Ruby 3.3 est compatible avec Rails 8.0
+FROM ruby:3.3
 
 # OCI Image labels
 LABEL org.opencontainers.image.source=https://github.com/flemzord/journalduhacker.net
@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.description="Journal du Hacker - A Hacker News li
 LABEL org.opencontainers.image.licenses=AGPL
 
 # Install bundler
-RUN gem install bundler -v 2.3.26 --no-document
+RUN gem install bundler --no-document
 
 # Install dependencies
 RUN apt-get update -qq && \

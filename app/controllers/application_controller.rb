@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_user_from_rss_token
-    if !@user && request[:format] == "rss" && params[:token].to_s.present?
+    if !@user && request.format.symbol == :rss && params[:token].to_s.present?
       @user = User.where(:rss_token => params[:token].to_s).first
     end
   end

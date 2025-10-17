@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -9,18 +9,17 @@ Bundler.require(*Rails.groups)
 module Lobsters
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 8.0
 
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{config.root}/extras)
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     config.time_zone = 'Europe/Paris'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
@@ -39,7 +38,7 @@ module Lobsters
     config.active_record.yaml_column_permitted_classes += [Symbol, Date, Time, DateTime, ActiveSupport::HashWithIndifferentAccess, BigDecimal]
 
     config.after_initialize do
-      require "#{Rails.root}/lib/monkey.rb"
+      load "#{Rails.root}/lib/monkey.rb"
     end
   end
 end
