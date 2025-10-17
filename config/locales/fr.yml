@@ -4,6 +4,11 @@
 fr:
   activerecord:
     errors:
+      messages:
+        record_invalid: "La validation a échoué : %{errors}"
+        taken: "n'est pas disponible"
+        blank: "doit être rempli(e)"
+        invalid: "n'est pas valide"
       template:
         body: 'Veuillez vérifier les champs suivants : '
         header:
@@ -21,6 +26,7 @@ fr:
               confirmation: "La confirmation et le mot de passe ne correspondent pas"
             username:
               invalid: "Le nom d'utilisateur est invalide"
+              taken: "n'est pas disponible"
         story:
           attributes:
             title:

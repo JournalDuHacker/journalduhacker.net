@@ -44,20 +44,20 @@ describe Story do
   end
 
   it "checks for a previously posted story with same url" do
-    Story.count.should == 0
+    initial_count = Story.count
 
     Story.make!(:title => "flim flam", :url => "http://example.com/")
-    Story.count.should == 1
+    Story.count.should == initial_count + 1
 
     expect { Story.make!(:title => "flim flam 2",
       :url => "http://example.com/") }.to raise_error
 
-    Story.count.should == 1
+    Story.count.should == initial_count + 1
 
     expect { Story.make!(:title => "flim flam 2",
       :url => "http://www.example.com/") }.to raise_error
 
-    Story.count.should == 1
+    Story.count.should == initial_count + 1
   end
 
   it "parses domain properly" do
@@ -139,7 +139,7 @@ describe Story do
     mod_log.moderator_user_id.should == mod.id
     mod_log.story_id.should == s.id
     mod_log.reason.should == "because i hate you"
-    mod_log.action.should match(/title from "blah" to "changed title"/)
-    mod_log.action.should match(/tags from "tag1 tag2" to "tag1"/)
+    mod_log.action.should match(/title changée de "blah" à "changed title"/)
+    mod_log.action.should match(/tags changée de "tag1 tag2" à "tag1"/)
   end
 end

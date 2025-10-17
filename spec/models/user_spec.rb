@@ -6,8 +6,9 @@ describe User do
     expect { User.make!(:username => "") }.to raise_error
     expect { User.make!(:username => "*") }.to raise_error
 
-    User.make!(:username => "test")
-    expect { User.make!(:username => "test") }.to raise_error
+    unique_username = "test_#{Time.now.to_i}_#{rand(1000)}"
+    User.make!(:username => unique_username)
+    expect { User.make!(:username => unique_username) }.to raise_error
   end
 
   it "has a valid email address" do
@@ -30,7 +31,7 @@ describe User do
   end
 
   it "gets an error message after registering banned name" do
-    expect { User.make!(:username => "admin") }.to raise_error("Validation failed: Username is not permitted")
+    expect { User.make!(:username => "admin") }.to raise_error("La validation a échoué : Username is not permitted")
   end
 
   it "shows a user is banned or not" do
