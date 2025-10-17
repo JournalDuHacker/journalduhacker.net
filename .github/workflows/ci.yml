@@ -45,15 +45,6 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Wait for database
-        run: |
-          for i in {1..30}; do
-            mysqladmin ping -h "$DATABASE_HOST" -P "$DATABASE_PORT" -p"$DATABASE_PASSWORD" --silent && exit 0
-            sleep 2
-          done
-          echo "MySQL did not become ready in time" >&2
-          exit 1
-
       - name: Prepare database
         run: bundle exec rails db:create db:schema:load
 
