@@ -2,8 +2,8 @@
 
 # Monkey patch for Ruby 3.x compatibility with Machinist
 # In Ruby 3.x, Fixnum was merged into Integer
-unless defined?(Fixnum)
-  Fixnum = Integer
+unless defined?(Fixnum) # rubocop:disable Lint/UnifiedInteger
+  Fixnum = Integer # rubocop:disable Lint/UnifiedInteger
 end
 
 ENV["RAILS_ENV"] ||= "test"
