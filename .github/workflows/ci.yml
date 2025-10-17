@@ -19,6 +19,11 @@ jobs:
     services:
       mariadb:
         image: mariadb:10.1
+        command: >
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
+          --innodb-flush-log-at-trx-commit=2
+          --sync-binlog=0
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: journalduhacker_test
