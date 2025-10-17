@@ -2,19 +2,18 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_10_16_134548) do
-
-  create_table "comments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at"
+ActiveRecord::Schema[7.0].define(version: 2025_10_16_134548) do
+  create_table "comments", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil
     t.string "short_id", limit: 10, default: "", null: false
     t.integer "story_id", null: false
     t.integer "user_id", null: false
@@ -38,58 +37,58 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
-  create_table "hat_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "hat_requests", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "user_id"
     t.string "hat"
     t.string "link"
     t.text "comment"
   end
 
-  create_table "hats", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "hats", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "user_id"
     t.integer "granted_by_user_id"
     t.string "hat"
     t.string "link"
   end
 
-  create_table "hidden_stories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "hidden_stories", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "user_id"
     t.integer "story_id"
     t.index ["user_id", "story_id"], name: "index_hidden_stories_on_user_id_and_story_id", unique: true
   end
 
-  create_table "invitation_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "invitation_requests", id: :integer, charset: "latin1", force: :cascade do |t|
     t.string "code"
     t.boolean "is_verified", default: false
     t.string "email"
     t.string "name"
     t.text "memo"
     t.string "ip_address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
-  create_table "invitations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "invitations", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "user_id"
     t.string "email"
     t.string "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "memo", size: :medium
   end
 
-  create_table "keystores", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "keystores", id: false, charset: "latin1", force: :cascade do |t|
     t.string "key", limit: 50, default: "", null: false
     t.bigint "value"
     t.index ["key"], name: "key", unique: true
   end
 
-  create_table "messages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at"
+  create_table "messages", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
     t.integer "author_user_id"
     t.integer "recipient_user_id"
     t.boolean "has_been_read", default: false
@@ -101,9 +100,9 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.index ["short_id"], name: "random_hash", unique: true
   end
 
-  create_table "moderations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "moderations", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "moderator_user_id"
     t.integer "story_id"
     t.integer "comment_id"
@@ -113,8 +112,8 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.boolean "is_from_suggestions", default: false
   end
 
-  create_table "stories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at"
+  create_table "stories", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
     t.integer "user_id"
     t.string "url", limit: 250, default: ""
     t.string "title", limit: 150, default: "", null: false
@@ -129,7 +128,7 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.text "story_cache", size: :medium
     t.integer "comments_count", default: 0, null: false
     t.integer "merged_story_id"
-    t.datetime "unavailable_at"
+    t.datetime "unavailable_at", precision: nil
     t.string "twitter_id", limit: 20
     t.boolean "user_is_author", default: false
     t.index ["created_at"], name: "index_stories_on_created_at"
@@ -142,33 +141,33 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.index ["url"], name: "url", length: 191
   end
 
-  create_table "suggested_taggings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "suggested_taggings", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "story_id"
     t.integer "tag_id"
     t.integer "user_id"
   end
 
-  create_table "suggested_titles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "suggested_titles", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "story_id"
     t.integer "user_id"
     t.string "title", limit: 150, null: false
   end
 
-  create_table "tag_filters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "tag_filters", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
     t.integer "tag_id"
     t.index ["user_id", "tag_id"], name: "user_tag_idx"
   end
 
-  create_table "taggings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "taggings", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "story_id", null: false
     t.integer "tag_id", null: false
     t.index ["story_id", "tag_id"], name: "story_id_tag_id", unique: true
   end
 
-  create_table "tags", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "tags", id: :integer, charset: "latin1", force: :cascade do |t|
     t.string "tag", limit: 25, default: "", null: false
     t.string "description", limit: 100
     t.boolean "privileged", default: false
@@ -178,11 +177,11 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.index ["tag"], name: "tag", unique: true
   end
 
-  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "users", id: :integer, charset: "latin1", force: :cascade do |t|
     t.string "username", limit: 50
     t.string "email", limit: 100
     t.string "password_digest", limit: 75
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.boolean "is_admin", default: false
     t.string "password_reset_token", limit: 75
     t.string "session_token", limit: 75, default: "", null: false
@@ -194,11 +193,11 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.string "mailing_list_token", limit: 75
     t.integer "mailing_list_mode", default: 0
     t.integer "karma", default: 0, null: false
-    t.datetime "banned_at"
+    t.datetime "banned_at", precision: nil
     t.integer "banned_by_user_id"
     t.string "banned_reason", limit: 200
-    t.datetime "deleted_at"
-    t.datetime "disabled_invite_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "disabled_invite_at", precision: nil
     t.integer "disabled_invite_by_user_id"
     t.string "disabled_invite_reason", limit: 200
     t.text "settings"
@@ -210,7 +209,7 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.index ["username"], name: "username", unique: true
   end
 
-  create_table "votes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "votes", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "story_id", null: false
     t.integer "comment_id"

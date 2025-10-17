@@ -8,6 +8,10 @@ gem "sprockets-rails"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.4.2", require: false
 
+# Use the Puma web server [https://github.com/puma/puma]
+gem "puma", "~> 5.0"
+
+# Unicorn for production deployment
 gem "unicorn"
 
 gem "mysql2", ">= 0.5.4", "< 0.6"
