@@ -2,11 +2,11 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
@@ -20,11 +20,11 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.integer "user_id", null: false
     t.integer "parent_comment_id"
     t.integer "thread_id"
-    t.text "comment", limit: 16777215, null: false
+    t.text "comment", size: :medium, null: false
     t.integer "upvotes", default: 0, null: false
     t.integer "downvotes", default: 0, null: false
     t.decimal "confidence", precision: 20, scale: 19, default: "0.0", null: false
-    t.text "markeddown_comment", limit: 16777215
+    t.text "markeddown_comment", size: :medium
     t.boolean "is_deleted", default: false
     t.boolean "is_moderated", default: false
     t.boolean "is_from_email", default: false
@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "memo", limit: 16777215
+    t.text "memo", size: :medium
   end
 
   create_table "keystores", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.integer "recipient_user_id"
     t.boolean "has_been_read", default: false
     t.string "subject", limit: 100
-    t.text "body", limit: 16777215
+    t.text "body", size: :medium
     t.string "short_id", limit: 30
     t.boolean "deleted_by_author", default: false
     t.boolean "deleted_by_recipient", default: false
@@ -108,8 +108,8 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.integer "story_id"
     t.integer "comment_id"
     t.integer "user_id"
-    t.text "action", limit: 16777215
-    t.text "reason", limit: 16777215
+    t.text "action", size: :medium
+    t.text "reason", size: :medium
     t.boolean "is_from_suggestions", default: false
   end
 
@@ -118,15 +118,15 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.integer "user_id"
     t.string "url", limit: 250, default: ""
     t.string "title", limit: 150, default: "", null: false
-    t.text "description", limit: 16777215
+    t.text "description", size: :medium
     t.string "short_id", limit: 6, default: "", null: false
     t.boolean "is_expired", default: false, null: false
     t.integer "upvotes", default: 0, null: false
     t.integer "downvotes", default: 0, null: false
     t.boolean "is_moderated", default: false, null: false
     t.decimal "hotness", precision: 20, scale: 10, default: "0.0", null: false
-    t.text "markeddown_description", limit: 16777215
-    t.text "story_cache", limit: 16777215
+    t.text "markeddown_description", size: :medium
+    t.text "story_cache", size: :medium
     t.integer "comments_count", default: 0, null: false
     t.integer "merged_story_id"
     t.datetime "unavailable_at"
@@ -186,7 +186,7 @@ ActiveRecord::Schema.define(version: 2025_10_16_134548) do
     t.boolean "is_admin", default: false
     t.string "password_reset_token", limit: 75
     t.string "session_token", limit: 75, default: "", null: false
-    t.text "about", limit: 16777215
+    t.text "about", size: :medium
     t.integer "invited_by_user_id"
     t.boolean "is_moderator", default: false
     t.boolean "pushover_mentions", default: false

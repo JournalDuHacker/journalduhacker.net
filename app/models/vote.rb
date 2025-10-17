@@ -1,7 +1,7 @@
 class Vote < ApplicationRecord
   belongs_to :user
   belongs_to :story
-  belongs_to :comment
+  belongs_to :comment, :optional => true
 
   COMMENT_REASONS = {
     "O" => I18n.t('models.vote.offtopicvote'),

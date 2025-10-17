@@ -1,10 +1,11 @@
 class Moderation < ApplicationRecord
   belongs_to :moderator,
     :class_name => "User",
-    :foreign_key => "moderator_user_id"
-  belongs_to :story
-  belongs_to :comment
-  belongs_to :user
+    :foreign_key => "moderator_user_id",
+    :optional => true
+  belongs_to :story, :optional => true
+  belongs_to :comment, :optional => true
+  belongs_to :user, :optional => true
 
   after_create :send_message_to_moderated
 
