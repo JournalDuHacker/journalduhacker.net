@@ -75,7 +75,7 @@ describe TagFilter do
     it "shows stories without filtered tag to user" do
       user = User.make!
       filtered_tag = Tag.create!(tag: "filtered", description: "Filtered tag")
-      normal_tag = Tag.find_by(tag: "tag1") || Tag.create!(tag: "tag1", description: "Normal tag")
+      Tag.find_by(tag: "tag1") || Tag.create!(tag: "tag1", description: "Normal tag")
       TagFilter.create!(user_id: user.id, tag_id: filtered_tag.id)
 
       # Story without filtered tag
