@@ -84,9 +84,9 @@ class StoryRepository
   end
 
   def top(length)
-    top = base_scope.where("created_at >= (NOW() - INTERVAL " \
-      "#{length[:dur]} #{length[:intv].upcase})")
-    top.order("#{Story.score_sql} DESC")
+    top = base_scope.where(Arel.sql("created_at >= (NOW() - INTERVAL " \
+      "#{length[:dur]} #{length[:intv].upcase})"))
+    top.order(Arel.sql("#{Story.score_sql} DESC"))
   end
 
   private
@@ -120,11 +120,11 @@ class StoryRepository
   end
 
   def positive_ranked(scope)
-    scope.where("#{Story.score_sql} >= 0")
+    scope.where(Arel.sql("#{Story.score_sql} >= 0"))
   end
 
   def has_minimal_score(scope)
-    scope.where("#{Story.score_sql} >= 2")
+    scope.where(Arel.sql("#{Story.score_sql} >= 2"))
   end
 
   def filter_tags(scope, tags)

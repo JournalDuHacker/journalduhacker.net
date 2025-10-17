@@ -362,7 +362,7 @@ class User < ApplicationRecord
     ).group(
       Tag.arel_table[:id]
     ).order(
-      "COUNT(*) desc"
+      Arel.sql("COUNT(*) desc")
     ).first
   end
 
@@ -373,13 +373,13 @@ class User < ApplicationRecord
   end
 
   def recent_threads(amount, include_submitted_stories = false)
-    thread_ids = comments.group(:thread_id).order("MAX(created_at) DESC")
+    thread_ids = comments.group(:thread_id).order(Arel.sql("MAX(created_at) DESC"))
       .limit(amount).pluck(:thread_id)
 
     if include_submitted_stories && show_submitted_story_threads
       thread_ids += Comment.joins(:story)
         .where(stories: {user_id: id}).group(:thread_id)
-        .order("MAX(comments.created_at) DESC").limit(amount).pluck(:thread_id)
+        .order(Arel.sql("MAX(comments.created_at) DESC")).limit(amount).pluck(:thread_id)
 
       thread_ids = thread_ids.uniq.sort.reverse[0, amount]
     end
