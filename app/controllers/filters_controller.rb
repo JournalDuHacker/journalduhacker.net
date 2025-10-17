@@ -3,22 +3,22 @@ class FiltersController < ApplicationController
 
   def index
     @cur_url = "/filters"
-    @title = I18n.t 'controllers.filters_controller.filterstitle'
+    @title = I18n.t "controllers.filters_controller.filterstitle"
 
     @tags = Tag.active.all_with_story_counts_for(@user)
 
-    if @user
-      @filtered_tags = @user.tag_filter_tags.to_a
+    @filtered_tags = if @user
+      @user.tag_filter_tags.to_a
     else
-      @filtered_tags = tags_filtered_by_cookie.to_a
+      tags_filtered_by_cookie.to_a
     end
   end
 
   def update
     tags_param = params[:tags]
     new_tags = tags_param.blank? ? [] :
-      Tag.active.where(:tag => tags_param).to_a
-    new_tags.keep_if {|t| t.valid_for? @user }
+      Tag.active.where(tag: tags_param).to_a
+    new_tags.keep_if { |t| t.valid_for? @user }
 
     if @user
       @user.tag_filter_tags = new_tags
@@ -26,7 +26,7 @@ class FiltersController < ApplicationController
       cookies.permanent[TAG_FILTER_COOKIE] = new_tags.map(&:tag).join(",")
     end
 
-    flash[:success] = I18n.t 'controllers.filters_controller.flashfilterupdate'
+    flash[:success] = I18n.t "controllers.filters_controller.flashfilterupdate"
 
     redirect_to filters_path
   end

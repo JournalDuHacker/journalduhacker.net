@@ -8,7 +8,7 @@ describe Markdowner do
   end
 
   it "turns @username into a link if @username exists" do
-    User.make!(:username => "blahblah")
+    User.make!(username: "blahblah")
 
     expect(Markdowner.to_html("hi @blahblah test")).to eq(
       "<p>hi <a href=\"/u/blahblah\">@blahblah</a> test</p>"
@@ -22,34 +22,34 @@ describe Markdowner do
   # bug#209
   it "keeps punctuation inside of auto-generated links when using brackets" do
     expect(Markdowner.to_html("hi <http://example.com/a.> test")).to eq(
-      "<p>hi <a href=\"http://example.com/a.\" rel=\"nofollow\">" <<
+      "<p>hi <a href=\"http://example.com/a.\" rel=\"nofollow\">" \
         "http://example.com/a.</a> test</p>"
     )
   end
 
   # bug#242
   it "does not expand @ signs inside urls" do
-    User.make!(:username => "blahblah")
+    User.make!(username: "blahblah")
 
     expect(Markdowner.to_html("hi http://example.com/@blahblah/ test")).to eq(
-      "<p>hi <a href=\"http://example.com/@blahblah/\" rel=\"nofollow\">" <<
+      "<p>hi <a href=\"http://example.com/@blahblah/\" rel=\"nofollow\">" \
         "http://example.com/@blahblah/</a> test</p>"
     )
 
     expect(Markdowner.to_html("hi [test](http://example.com/@blahblah/)")).to eq(
-      "<p>hi <a href=\"http://example.com/@blahblah/\" rel=\"nofollow\">" <<
+      "<p>hi <a href=\"http://example.com/@blahblah/\" rel=\"nofollow\">" \
         "test</a></p>"
     )
   end
 
   it "correctly adds nofollow" do
     expect(Markdowner.to_html("[ex](http://example.com)")).to eq(
-      "<p><a href=\"http://example.com\" rel=\"nofollow\">" <<
+      "<p><a href=\"http://example.com\" rel=\"nofollow\">" \
         "ex</a></p>"
     )
 
     expect(Markdowner.to_html("[ex](//example.com)")).to eq(
-      "<p><a href=\"//example.com\" rel=\"nofollow\">" <<
+      "<p><a href=\"//example.com\" rel=\"nofollow\">" \
         "ex</a></p>"
     )
 

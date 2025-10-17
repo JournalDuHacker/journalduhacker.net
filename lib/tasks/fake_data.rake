@@ -8,7 +8,7 @@ class FakeDataGenerator
     users = 0.upto(@users_count).map do |i|
       name = Faker::Name.name
       password = Faker::Internet.password
-      user_name = Faker::Internet.user_name(name, %w(_))
+      user_name = Faker::Internet.user_name(name, %w[_])
       User.create! email: Faker::Internet.email(name),
         password: password,
         password_confirmation: password,
@@ -16,15 +16,15 @@ class FakeDataGenerator
     end
 
     @stories_count.times do
-      user = users[Random.rand(users.length-1)]
+      user = users[Random.rand(users.length - 1)]
       title = Faker::Lorem.sentence(3)
-      tag = Tag.find_or_create_by! tag: title.split(' ').first.downcase
+      tag = Tag.find_or_create_by! tag: title.split(" ").first.downcase
       Story.create! user: user, title: title, url: Faker::Internet.url, tags_a: [tag.tag]
     end
   end
 end
 
-desc 'Generates fake data for testing purposes'
+desc "Generates fake data for testing purposes"
 task fake_data: :environment do
   fail "It's not intended to be run outside development environment" unless Rails.env.development?
   unless (User.count + Tag.count + Story.count) == 0

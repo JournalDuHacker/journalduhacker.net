@@ -17,14 +17,14 @@ class LoginController < ApplicationController
   def index
     @title = "Login"
     @referer ||= request.referer
-    render :action => "index"
+    render action: "index"
   end
 
   def login
-    if params[:email].to_s.match(/@/)
-      user = User.where(:email => params[:email]).first
+    user = if /@/.match?(params[:email].to_s)
+      User.where(email: params[:email]).first
     else
-      user = User.where(:username => params[:email]).first
+      User.where(username: params[:email]).first
     end
 
     fail_reason = nil
@@ -38,8 +38,8 @@ class LoginController < ApplicationController
         # if the user has 2fa enabled and the password looks like it has a totp
         # code attached, separate them
         if user.has_2fa? &&
-        (m = params[:password].to_s.match(/\A(.+):(\d+)\z/)) &&
-        user.authenticate(m[1])
+            (m = params[:password].to_s.match(/\A(.+):(\d+)\z/)) &&
+            user.authenticate(m[1])
           params[:password] = m[1]
           params[:totp] = m[2]
         else
@@ -55,7 +55,7 @@ class LoginController < ApplicationController
         raise LoginDeletedError
       end
 
-      if !user.password_digest.to_s.match(/^\$2a\$#{BCrypt::Engine::DEFAULT_COST}\$/)
+      if !user.password_digest.to_s.match(/^\$2a\$#{BCrypt::Engine::DEFAULT_COST}\$/o)
         user.password = user.password_confirmation = params[:password].to_s
         user.save!
       end
@@ -74,8 +74,8 @@ class LoginController < ApplicationController
               redirect_to "/login/2fa"
             }
             format.json {
-              render :json => { :status => 0,
-                :error => "must supply totp parameter" }
+              render json: {status: 0,
+                            error: "must supply totp parameter"}
             }
           end
         end
@@ -102,17 +102,17 @@ class LoginController < ApplicationController
           redirect_to "/"
         }
         format.json {
-          render :json => { :status => 1, :username => user.username }
+          render json: {status: 1, username: user.username}
         }
       end
     rescue LoginBannedError
-      fail_reason = I18n.t 'controllers.login_controller.bannedaccount'
+      fail_reason = I18n.t "controllers.login_controller.bannedaccount"
     rescue LoginDeletedError
-      fail_reason = I18n.t 'controllers.login_controller.deletedaccount'
+      fail_reason = I18n.t "controllers.login_controller.deletedaccount"
     rescue LoginTOTPFailedError
-      fail_reason = I18n.t 'controllers.login_controller.totpinvalid'
+      fail_reason = I18n.t "controllers.login_controller.totpinvalid"
     rescue LoginFailedError
-      fail_reason = I18n.t 'controllers.login_controller.flashlogininvalid'
+      fail_reason = I18n.t "controllers.login_controller.flashlogininvalid"
     end
 
     respond_to do |format|
@@ -122,14 +122,14 @@ class LoginController < ApplicationController
         index
       }
       format.json {
-        render :json => { :status => 0, :error => fail_reason }
+        render json: {status: 0, error: fail_reason}
       }
     end
   end
 
   def forgot_password
     @title = "Reset Password"
-    render :action => "forgot_password"
+    render action: "forgot_password"
   end
 
   def reset_password
@@ -143,17 +143,17 @@ class LoginController < ApplicationController
 
     @found_user.initiate_password_reset_for_ip(request.remote_ip)
 
-    flash.now[:success] = "Password reset instructions have been e-mailed " <<
+    flash.now[:success] = "Password reset instructions have been e-mailed " \
       "to you."
-    return index
+    index
   end
 
   def set_new_password
     @title = "Reset Password"
 
     if (m = params[:token].to_s.match(/^(\d+)-/)) &&
-    (Time.now - Time.at(m[1].to_i)) < 24.hours
-      @reset_user = User.where(:password_reset_token => params[:token].to_s).first
+        (Time.now - Time.at(m[1].to_i)) < 24.hours
+      @reset_user = User.where(password_reset_token: params[:token].to_s).first
     end
 
     if @reset_user && !@reset_user.is_banned?
@@ -171,29 +171,29 @@ class LoginController < ApplicationController
 
         if @reset_user.save && @reset_user.is_active?
           if @reset_user.has_2fa?
-            flash[:success] = t('.passwordreset')
-            return redirect_to "/login"
+            flash[:success] = t(".passwordreset")
+            redirect_to "/login"
           else
             session[:u] = @reset_user.session_token
-            return redirect_to "/"
+            redirect_to "/"
           end
         else
-          flash[:error] = t('.couldnotresetpassword')
+          flash[:error] = t(".couldnotresetpassword")
         end
       end
     else
-      flash[:error] = t('.invalidresettoken')
-      return redirect_to forgot_password_path
+      flash[:error] = t(".invalidresettoken")
+      redirect_to forgot_password_path
     end
   end
 
   def twofa
-    if tmpu = find_twofa_user
-      Rails.logger.info "  Authenticated as user #{tmpu.id} " <<
+    if (tmpu = find_twofa_user)
+      Rails.logger.info "  Authenticated as user #{tmpu.id} " \
         "(#{tmpu.username}), verifying TOTP"
     else
       reset_session
-      return redirect_to "/login"
+      redirect_to "/login"
     end
   end
 
@@ -201,17 +201,18 @@ class LoginController < ApplicationController
     if (tmpu = find_twofa_user) && tmpu.authenticate_totp(params[:totp_code])
       session[:u] = tmpu.session_token
       session.delete(:twofa_u)
-      return redirect_to "/"
+      redirect_to "/"
     else
-      flash[:error] = t('.totpcodenotmatch')
-      return redirect_to "/login/2fa"
+      flash[:error] = t(".totpcodenotmatch")
+      redirect_to "/login/2fa"
     end
   end
 
-private
+  private
+
   def find_twofa_user
     if session[:twofa_u].present?
-      return User.where(:session_token => session[:twofa_u]).first
+      User.where(session_token: session[:twofa_u]).first
     end
   end
 end

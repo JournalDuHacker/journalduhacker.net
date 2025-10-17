@@ -4,7 +4,7 @@ class SettingsController < ApplicationController
   TOTP_SESSION_TIMEOUT = (60 * 15)
 
   def index
-    @title = t('.accountsettings')
+    @title = t(".accountsettings")
 
     @edit_user = @user.dup
   end
@@ -13,32 +13,32 @@ class SettingsController < ApplicationController
     if @user.try(:authenticate, params[:user][:password].to_s)
       @user.delete!
       reset_session
-      flash[:success] = t('.deleteaccountflash')
+      flash[:success] = t(".deleteaccountflash")
       return redirect_to "/"
     end
 
-    flash[:error] = t('.verifypasswordflash')
-    return redirect_to settings_path
+    flash[:error] = t(".verifypasswordflash")
+    redirect_to settings_path
   end
 
   def update
     @edit_user = @user.clone
 
     if params[:user][:password].empty? ||
-    @user.authenticate(params[:current_password].to_s)
+        @user.authenticate(params[:current_password].to_s)
       if @edit_user.update_attributes(user_params)
-        flash.now[:success] = t('.updatesettingsflash')
+        flash.now[:success] = t(".updatesettingsflash")
         @user = @edit_user
       end
     else
-      flash[:error] = t('.passwordnotcorrect')
+      flash[:error] = t(".passwordnotcorrect")
     end
 
-    render :action => "index"
+    render action: "index"
   end
 
   def twofa
-    @title = t('.title')
+    @title = t(".title")
   end
 
   def twofa_auth
@@ -48,22 +48,22 @@ class SettingsController < ApplicationController
 
       if @user.has_2fa?
         @user.disable_2fa!
-        flash[:success] = t('.2fahasbeendisabled')
-        return redirect_to "/settings"
+        flash[:success] = t(".2fahasbeendisabled")
+        redirect_to "/settings"
       else
-        return redirect_to twofa_enroll_url
+        redirect_to twofa_enroll_url
       end
     else
-      flash[:error] = t('.2fapassnotcorrect')
-      return redirect_to twofa_url
+      flash[:error] = t(".2fapassnotcorrect")
+      redirect_to twofa_url
     end
   end
 
   def twofa_enroll
-    @title = t('.title')
+    @title = t(".title")
 
     if (Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT
-      flash[:error] = t('.enrollmenttimeout')
+      flash[:error] = t(".enrollmenttimeout")
       return redirect_to twofa_url
     end
 
@@ -72,31 +72,31 @@ class SettingsController < ApplicationController
     end
 
     totp = ROTP::TOTP.new(session[:totp_secret],
-      :issuer => Rails.application.name)
+      issuer: Rails.application.name)
     totp_url = totp.provisioning_uri(@user.email)
 
     # no option for inline svg, so just strip off leading <?xml> tag
     qrcode = RQRCode::QRCode.new(totp_url)
-    qr = qrcode.as_svg(:offset => 0, color: "000", :module_size => 5,
-      :shape_rendering => "crispEdges").gsub(/^<\?xml.*>/, "")
+    qr = qrcode.as_svg(offset: 0, color: "000", module_size: 5,
+      shape_rendering: "crispEdges").gsub(/^<\?xml.*>/, "")
 
     @qr_svg = "<a href=\"#{totp_url}\">#{qr}</a>"
   end
 
   def twofa_verify
-    @title = t('.title')
+    @title = t(".title")
 
     if ((Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
-    !session[:totp_secret]
-      flash[:error] = t('.enrollmenttimeout')
-      return redirect_to twofa_url
+        !session[:totp_secret]
+      flash[:error] = t(".enrollmenttimeout")
+      redirect_to twofa_url
     end
   end
 
   def twofa_update
     if ((Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
-    !session[:totp_secret]
-      flash[:error] = t('.enrollmenttimeout')
+        !session[:totp_secret]
+      flash[:error] = t(".enrollmenttimeout")
       return redirect_to twofa_url
     end
 
@@ -108,12 +108,12 @@ class SettingsController < ApplicationController
 
       session[:u] = @user.session_token
 
-      flash[:success] = t('.2fahasbeenenabled')
+      flash[:success] = t(".2fahasbeenenabled")
       session.delete(:totp_secret)
-      return redirect_to "/settings"
+      redirect_to "/settings"
     else
-      flash[:error] = t('.totpinvalid')
-      return redirect_to twofa_verify_url
+      flash[:error] = t(".totpinvalid")
+      redirect_to twofa_verify_url
     end
   end
 
@@ -127,10 +127,10 @@ class SettingsController < ApplicationController
 
     session[:pushover_rand] = SecureRandom.hex
 
-    return redirect_to Pushover.subscription_url({
-      :success => "#{Rails.application.root_url}settings/pushover_callback?" <<
+    redirect_to Pushover.subscription_url({
+      success: "#{Rails.application.root_url}settings/pushover_callback?" \
         "rand=#{session[:pushover_rand]}",
-      :failure => "#{Rails.application.root_url}settings/",
+      failure: "#{Rails.application.root_url}settings/"
     })
   end
 
@@ -153,24 +153,24 @@ class SettingsController < ApplicationController
     @user.pushover_user_key = params[:pushover_user_key].to_s
     @user.save!
 
-    if @user.pushover_user_key.present?
-      flash[:success] = "Your account is now setup for Pushover notifications."
+    flash[:success] = if @user.pushover_user_key.present?
+      "Your account is now setup for Pushover notifications."
     else
-      flash[:success] = "Your account is no longer setup for Pushover " <<
+      "Your account is no longer setup for Pushover " \
         "notifications."
     end
 
-    return redirect_to "/settings"
+    redirect_to "/settings"
   end
 
   def github_auth
     session[:github_state] = SecureRandom.hex
-    return redirect_to Github.oauth_auth_url(session[:github_state])
+    redirect_to Github.oauth_auth_url(session[:github_state])
   end
 
   def github_callback
     if !session[:github_state].present? || !params[:code].present? ||
-    (params[:state].to_s != session[:github_state].to_s)
+        (params[:state].to_s != session[:github_state].to_s)
       flash[:error] = "Invalid OAuth state"
       return redirect_to "/settings"
     end
@@ -182,13 +182,13 @@ class SettingsController < ApplicationController
       @user.github_oauth_token = tok
       @user.github_username = username
       @user.save!
-      flash[:success] = "Your account has been linked to GitHub user " <<
+      flash[:success] = "Your account has been linked to GitHub user " \
         "#{username}."
     else
       return github_disconnect
     end
 
-    return redirect_to "/settings"
+    redirect_to "/settings"
   end
 
   def github_disconnect
@@ -196,17 +196,17 @@ class SettingsController < ApplicationController
     @user.github_username = nil
     @user.save!
     flash[:success] = "Your GitHub association has been removed."
-    return redirect_to "/settings"
+    redirect_to "/settings"
   end
 
   def twitter_auth
     session[:twitter_state] = SecureRandom.hex
-    return redirect_to Twitter.oauth_auth_url(session[:twitter_state])
+    redirect_to Twitter.oauth_auth_url(session[:twitter_state])
   end
 
   def twitter_callback
     if !session[:twitter_state].present? ||
-    (params[:state].to_s != session[:twitter_state].to_s)
+        (params[:state].to_s != session[:twitter_state].to_s)
       flash[:error] = "Invalid OAuth state"
       return redirect_to "/settings"
     end
@@ -214,19 +214,20 @@ class SettingsController < ApplicationController
     session.delete(:twitter_state)
 
     tok, sec, username = Twitter.token_secret_and_user_from_token_and_verifier(
-      params[:oauth_token], params[:oauth_verifier])
+      params[:oauth_token], params[:oauth_verifier]
+    )
     if tok.present? && username.present?
       @user.twitter_oauth_token = tok
       @user.twitter_oauth_token_secret = sec
       @user.twitter_username = username
       @user.save!
-      flash[:success] = "Your account has been linked to Twitter user @" <<
+      flash[:success] = "Your account has been linked to Twitter user @" \
         "#{username}."
     else
       return twitter_disconnect
     end
 
-    return redirect_to "/settings"
+    redirect_to "/settings"
   end
 
   def twitter_disconnect
@@ -235,10 +236,10 @@ class SettingsController < ApplicationController
     @user.twitter_oauth_token_secret = nil
     @user.save!
     flash[:success] = "Your Twitter association has been removed."
-    return redirect_to "/settings"
+    redirect_to "/settings"
   end
 
-private
+  private
 
   def user_params
     params.require(:user).permit(

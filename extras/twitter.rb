@@ -21,7 +21,7 @@ class Twitter
 
   def self.oauth_consumer
     OAuth::Consumer.new(self.CONSUMER_KEY, self.CONSUMER_SECRET,
-      { :site => "https://api.twitter.com" })
+      {site: "https://api.twitter.com"})
   end
 
   def self.oauth_request(req, method = :get, post_data = nil)
@@ -29,36 +29,34 @@ class Twitter
       raise "no auth token configured"
     end
 
-    begin
-      Timeout.timeout(120) do
-        at = OAuth::AccessToken.new(self.oauth_consumer, self.AUTH_TOKEN,
-          self.AUTH_SECRET)
+    Timeout.timeout(120) do
+      at = OAuth::AccessToken.new(oauth_consumer, self.AUTH_TOKEN,
+        self.AUTH_SECRET)
 
-        if method == :get
-          res = at.get(req)
-        elsif method == :post
-          res = at.post(req, post_data)
-        else
-          raise "what kind of method is #{method}?"
-        end
+      if method == :get
+        res = at.get(req)
+      elsif method == :post
+        res = at.post(req, post_data)
+      else
+        raise "what kind of method is #{method}?"
+      end
 
-        if res.class == Net::HTTPUnauthorized
-          raise "not authorized"
-        end
+      if res.instance_of?(Net::HTTPUnauthorized)
+        raise "not authorized"
+      end
 
-        if res.body.to_s == ""
-          raise res.inspect
-        else
-          return JSON.parse(res.body)
-        end
+      if res.body.to_s == ""
+        raise res.inspect
+      else
+        return JSON.parse(res.body)
       end
     end
   end
 
   def self.token_secret_and_user_from_token_and_verifier(tok, verifier)
-    rt = OAuth::RequestToken.from_hash(self.oauth_consumer,
-      { :oauth_token => tok })
-    at = rt.get_access_token({ :oauth_verifier => verifier })
+    rt = OAuth::RequestToken.from_hash(oauth_consumer,
+      {oauth_token: tok})
+    at = rt.get_access_token({oauth_verifier: verifier})
 
     res = at.get("/1.1/account/verify_credentials.json")
     js = JSON.parse(res.body)
@@ -67,15 +65,14 @@ class Twitter
       return nil
     end
 
-    [ at.token, at.secret, js["screen_name"] ]
+    [at.token, at.secret, js["screen_name"]]
   end
 
   def self.oauth_request_token(state)
-    self.oauth_consumer.get_request_token(:oauth_callback =>
-      Rails.application.root_url + "settings/twitter_callback?state=#{state}")
+    oauth_consumer.get_request_token(oauth_callback: Rails.application.root_url + "settings/twitter_callback?state=#{state}")
   end
 
   def self.oauth_auth_url(state)
-    self.oauth_request_token(state).authorize_url
+    oauth_request_token(state).authorize_url
   end
 end

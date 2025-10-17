@@ -20,10 +20,11 @@ module Net
       self
     end
 
-  private
+    private
+
     def conn_address
-      if self.custom_conn_address.to_s != ""
-        self.custom_conn_address
+      if custom_conn_address.to_s != ""
+        custom_conn_address
       else
         address
       end
@@ -71,7 +72,7 @@ class Sponge
     end
 
     if val.to_s == ""
-      @cookies[host][name] ? @cookies[host][name].delete : nil
+      @cookies[host][name]&.delete
     else
       @cookies[host][name] = val
     end
@@ -83,21 +84,21 @@ class Sponge
     # check for domain cookies
     @cookies.keys.each do |dom|
       if dom.length < host.length &&
-      dom == host[host.length - dom.length .. host.length - 1]
+          dom == host[host.length - dom.length..host.length - 1]
         dputs "adding domain keys from #{dom}"
         cooks = cooks.merge @cookies[dom]
       end
     end
 
     if cooks
-      return cooks.map{|k,v| "#{k}=#{v};" }.join(" ")
+      cooks.map { |k, v| "#{k}=#{v};" }.join(" ")
     else
-      return ""
+      ""
     end
   end
 
   def fetch(url, method = :get, fields = nil, raw_post_data = nil,
-  headers = {}, limit = 10)
+    headers = {}, limit = 10)
     raise ArgumentError, "http redirection too deep" if limit <= 0
 
     uri = URI.parse(url)
@@ -116,7 +117,7 @@ class Sponge
         end
 
         # reject ipv6 addresses
-        ips.reject!{|ip| ip.match(/:/) }
+        ips.reject! { |ip| ip.match(/:/) }
 
         # pick a random one
         tip = ips[rand(ips.length)]
@@ -129,7 +130,7 @@ class Sponge
         retried = true
         retry
       end
-    rescue StandardError => e
+    rescue => e
       raise "couldn't resolve #{uri.host} (#{e.inspect})"
     end
 
@@ -137,13 +138,13 @@ class Sponge
       raise "couldn't resolve #{uri.host}"
     end
 
-    if BAD_NETS.select{|n| IPAddr.new(n).include?(ip) }.any?
-      raise "refusing to talk to IP #{ip.to_s}"
+    if BAD_NETS.select { |n| IPAddr.new(n).include?(ip) }.any?
+      raise "refusing to talk to IP #{ip}"
     end
 
     host = Net::HTTP.new(ip.to_s, uri.port)
-    host.read_timeout = self.timeout
-    if self.debug
+    host.read_timeout = timeout
+    if debug
       host.set_debug_output $stdout
     end
 
@@ -156,11 +157,11 @@ class Sponge
 
     send_headers = headers.dup
 
-    path = (uri.path == "" ? "/" : uri.path)
+    path = ((uri.path == "") ? "/" : uri.path)
     if uri.query
       path += "?" + uri.query
     elsif method == :get && raw_post_data
-      path += "?" + URI.encode(raw_post_data)
+      path += "?" + CGI.escape(raw_post_data)
       send_headers["Content-type"] = "application/x-www-form-urlencoded"
     end
 
@@ -169,7 +170,7 @@ class Sponge
         post_data = raw_post_data
         send_headers["Content-type"] = "application/x-www-form-urlencoded"
       else
-        post_data = fields.map{|k,v| "#{k}=#{v}" }.join("&")
+        post_data = fields.map { |k, v| "#{k}=#{v}" }.join("&")
       end
 
       send_headers["Content-Length"] = post_data.length.to_s
@@ -177,7 +178,7 @@ class Sponge
 
     path.gsub!(/^\/\//, "/")
 
-    dputs "fetching #{url} (#{ip.to_s}) " + (uri.user ? "with http auth " +
+    dputs "fetching #{url} (#{ip}) " + (uri.user ? "with http auth " +
       uri.user + "/" + ("*" * uri.password.length) + " " : "") +
       "by #{method} with cookies #{cookies(uri.host)}"
 
@@ -185,36 +186,30 @@ class Sponge
       "Host" => uri.host,
       "Cookie" => cookies(uri.host),
       "Referer" => url.to_s,
-      "User-Agent" => "Mozilla/5.0 (compatible)",
+      "User-Agent" => "Mozilla/5.0 (compatible)"
     }.merge(send_headers || {})
 
     if uri.user
       send_headers["Authorization"] = "Basic " +
-        ["#{uri.user}:#{uri.password}"].pack('m').delete("\r\n")
+        ["#{uri.user}:#{uri.password}"].pack("m").delete("\r\n")
     end
-
-    res = nil
-    if method == :post
-      res = host.post(path, post_data, send_headers)
+    res = if method == :post
+      host.post(path, post_data, send_headers)
     else
-      res = host.get(path, send_headers)
+      host.get(path, send_headers)
     end
 
-    if res.get_fields("Set-Cookie")
-      res.get_fields("Set-Cookie").each do |cook|
-        if p = Regexp.new(/^([^=]+)=([^;]*)/).match(cook)
-          set_cookie(uri.host, p[1], p[2])
-        else
-          dputs "unable to match cookie line #{cook}"
-        end
+    res.get_fields("Set-Cookie")&.each do |cook|
+      if (p = /^([^=]+)=([^;]*)/.match(cook))
+        set_cookie(uri.host, p[1], p[2])
+      else
+        dputs "unable to match cookie line #{cook}"
       end
     end
 
-    last_res = res
-
     case res
     when Net::HTTPSuccess
-      return res.body
+      res.body
     when Net::HTTPRedirection
       # follow
       newuri = URI.parse(res["location"])
@@ -242,9 +237,10 @@ class Sponge
     fetch(url, "post", fields)
   end
 
-private
+  private
+
   def dputs(string)
-    if self.debug
+    if debug
       puts string
     end
   end

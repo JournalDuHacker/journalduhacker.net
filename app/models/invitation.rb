@@ -2,13 +2,13 @@ class Invitation < ApplicationRecord
   belongs_to :user
 
   validate do
-    unless email.to_s.match(/\A[^@ ]+@[^ @]+\.[^ @]+\z/)
+    unless /\A[^@ ]+@[^ @]+\.[^ @]+\z/.match?(email.to_s)
       errors.add(:email, "is not valid")
     end
   end
 
   before_validation :create_code,
-    :on => :create
+    on: :create
 
   def create_code
     (1...10).each do |tries|
@@ -17,7 +17,7 @@ class Invitation < ApplicationRecord
       end
 
       self.code = Utils.random_str(15)
-      unless Invitation.exists?(:code => self.code)
+      unless Invitation.exists?(code: code)
         break
       end
     end

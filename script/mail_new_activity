@@ -2,18 +2,20 @@
 
 ENV["RAILS_ENV"] ||= "production"
 
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
-require File.expand_path('../../config/boot',  __FILE__)
+APP_PATH = File.expand_path("../../config/application", __FILE__)
+require File.expand_path("../../config/boot", __FILE__)
 require APP_PATH
 Rails.application.require_environment!
 
 class String
   def quoted_printable(encoded_word = false)
-    s = [ self ].pack("M")
+    s = [self].pack("M")
 
     if encoded_word
-      s.split(/\r?\n/).map{|l| "=?UTF-8?Q?" <<
-        l.gsub(/=*$/, "").gsub(" ", "_") << "?=" }.join("\n\t")
+      s.split(/\r?\n/).map { |l|
+        "=?UTF-8?Q?" <<
+          l.gsub(/=*$/, "").tr(" ", "_") << "?="
+      }.join("\n\t")
     else
       s
     end
@@ -25,7 +27,7 @@ class String
     split("\n").collect do |line|
       if line.length <= len
         line
-      elsif m = line.match(/^(> ?|   +)(.*)/)
+      elsif (m = line.match(/^(> ?|   +)(.*)/))
         ind = m[1]
         if len - ind.length < 0
           ind = "    "
@@ -41,7 +43,7 @@ end
 def story_subject(story, prefix = "")
   ss = "#{prefix}#{story.title}"
 
-  story.tags.sort_by{|t| t.tag }.each do |t|
+  story.tags.sort_by { |t| t.tag }.each do |t|
     ss << " [#{t.tag}]"
   end
 
@@ -52,8 +54,9 @@ EMAIL_WIDTH = 72
 LAST_STORY_KEY = "mailing:last_story_id"
 LAST_COMMENT_KEY = "mailing:last_comment_id"
 
-mailing_list_users = User.where("mailing_list_mode > 0").select{|u|
-  u.is_active? }
+mailing_list_users = User.where("mailing_list_mode > 0").select { |u|
+  u.is_active?
+}
 
 last_story_id = (Keystore.value_for(LAST_STORY_KEY) || Story.last.id).to_i
 
@@ -67,7 +70,7 @@ Story.where("id > ? AND is_expired = ?", last_story_id, false).order(:id).each d
   s.save
 
   mailing_list_users.each do |u|
-    if (s.tags.map{|t| t.id } & u.tag_filters.map{|t| t.tag_id }).any?
+    if (s.tags.map { |t| t.id } & u.tag_filters.map { |t| t.tag_id }).any?
       # story has tags this user has filtered out
       next
     end
@@ -77,19 +80,19 @@ Story.where("id > ? AND is_expired = ?", last_story_id, false).order(:id).each d
       next
     end
 
-    domain = Rails.application.domain
+    Rails.application.domain
     list = "#{Rails.application.shortname}-#{u.mailing_list_token}@" <<
       Rails.application.domain
 
-    IO.popen([ {}, "/usr/sbin/sendmail", "-i", "-f",
-    "nobody@#{Rails.application.domain}", u.email ], "w") do |mail|
-      mail.puts "From: #{s.user.username} <#{s.user.username}@" <<
+    IO.popen([{}, "/usr/sbin/sendmail", "-i", "-f",
+      "nobody@#{Rails.application.domain}", u.email], "w") do |mail|
+      mail.puts "From: #{s.user.username} <#{s.user.username}@" \
         "#{Rails.application.domain}>"
       mail.puts "Reply-To: #{list}"
       mail.puts "To: #{list}"
       mail.puts "X-BeenThere: #{list}"
       mail.puts "List-Id: #{Rails.application.name} <#{list}>"
-      mail.puts "List-Unsubscribe: <" <<
+      mail.puts "List-Unsubscribe: <" \
         "#{Rails.application.root_url}settings>"
       mail.puts "Precedence: list"
       mail.puts "MIME-Version: 1.0"
@@ -138,7 +141,7 @@ last_comment_id = (Keystore.value_for(LAST_COMMENT_KEY) ||
   Comment.last.id).to_i
 
 Comment.where("id > ? AND (is_deleted = ? AND is_moderated = ?)",
-last_comment_id, false, false).order(:id).each do |c|
+  last_comment_id, false, false).order(:id).each do |c|
   # allow some time for newer comments to be edited before sending them out
   if (Time.now - (c.updated_at || c.created_at)) < 2.minutes
     break
@@ -150,7 +153,7 @@ last_comment_id, false, false).order(:id).each do |c|
       next
     end
 
-    if (c.story.tags.map{|t| t.id } & u.tag_filters.map{|t| t.tag_id }).any?
+    if (c.story.tags.map { |t| t.id } & u.tag_filters.map { |t| t.tag_id }).any?
       # story has tags this user has filtered out
       next
     end
@@ -164,8 +167,8 @@ last_comment_id, false, false).order(:id).each do |c|
     list = "#{Rails.application.shortname}-#{u.mailing_list_token}@" <<
       Rails.application.domain
 
-    IO.popen([ {}, "/usr/sbin/sendmail", "-i", "-f",
-    "nobody@#{domain}", u.email ], "w") do |mail|
+    IO.popen([{}, "/usr/sbin/sendmail", "-i", "-f",
+      "nobody@#{domain}", u.email], "w") do |mail|
       from = "From: \"#{c.user.username}"
       if c.hat
         from << " (#{c.hat.hat})"
@@ -176,7 +179,7 @@ last_comment_id, false, false).order(:id).each do |c|
       mail.puts "Reply-To: #{list}"
       mail.puts "To: #{list}"
       mail.puts "List-Id: #{Rails.application.name} <#{list}>"
-      mail.puts "List-Unsubscribe: <" <<
+      mail.puts "List-Unsubscribe: <" \
         "#{Rails.application.root_url}settings>"
       mail.puts "Precedence: list"
       mail.puts "MIME-Version: 1.0"
@@ -184,15 +187,16 @@ last_comment_id, false, false).order(:id).each do |c|
       mail.puts "Content-Transfer-Encoding: quoted-printable"
       mail.puts "Message-ID: <#{c.mailing_list_message_id}>"
 
-      refs = [ "<#{c.story.mailing_list_message_id}>" ]
+      refs = ["<#{c.story.mailing_list_message_id}>"]
 
       if c.parent_comment_id
         mail.puts "In-Reply-To: <#{c.parent_comment.mailing_list_message_id}>"
 
         thread = []
         indent_level = 0
-        Comment.where(:thread_id => c.thread_id).arrange_for_user(
-        nil).reverse.each do |cc|
+        Comment.where(thread_id: c.thread_id).arrange_for_user(
+        nil
+      ).reverse_each do |cc|
           if indent_level > 0 && cc.indent_level < indent_level
             thread.unshift cc
             indent_level = cc.indent_level

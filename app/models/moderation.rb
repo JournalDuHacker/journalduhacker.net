@@ -1,48 +1,48 @@
 class Moderation < ApplicationRecord
   belongs_to :moderator,
-    :class_name => "User",
-    :foreign_key => "moderator_user_id",
-    :optional => true
-  belongs_to :story, :optional => true
-  belongs_to :comment, :optional => true
-  belongs_to :user, :optional => true
+    class_name: "User",
+    foreign_key: "moderator_user_id",
+    optional: true
+  belongs_to :story, optional: true
+  belongs_to :comment, optional: true
+  belongs_to :user, optional: true
 
   after_create :send_message_to_moderated
 
   def send_message_to_moderated
     m = Message.new
-    m.author_user_id = self.moderator_user_id
+    m.author_user_id = moderator_user_id
 
     # mark as deleted by author so they don't fill up moderator message boxes
     m.deleted_by_author = true
 
-    if self.story
-      m.recipient_user_id = self.story.user_id
-      m.subject = I18n.t('models.moderation.storyeditedby') <<
-        (self.is_from_suggestions? ? I18n.t('models.moderation.usersuggestions') : I18n.t('models.moderation.amoderator'))
-      m.body = I18n.t('models.moderation.storyeditedfor', :title=> "#{self.story.title}", :url=>  "#{self.story.comments_url}") <<
-        "\n" <<
-        "> *#{self.action}*\n"
+    if story
+      m.recipient_user_id = story.user_id
+      m.subject = I18n.t("models.moderation.storyeditedby") <<
+        (is_from_suggestions? ? I18n.t("models.moderation.usersuggestions") : I18n.t("models.moderation.amoderator"))
+      m.body = I18n.t("models.moderation.storyeditedfor", title: story.title.to_s, url: story.comments_url.to_s) <<
+        "\n" \
+        "> *#{action}*\n"
 
-      if self.reason.present?
+      if reason.present?
         m.body << "\n" <<
-          I18n.t('models.moderation.reasongiven') <<
-          "\n" <<
-          "> *#{self.reason}*\n"
+          I18n.t("models.moderation.reasongiven") <<
+          "\n" \
+          "> *#{reason}*\n"
       end
 
-    elsif self.comment
-      m.recipient_user_id = self.comment.user_id
-      m.subject = I18n.t('models.moderation.commentmoderated')
-      m.body = I18n.t('models.moderation.commentmoderatedwhy', :title=> "#{self.comment.story.title}", :url=> "#{self.comment.story.comments_url}") <<
-        "\n" <<
-        "> *#{self.comment.comment}*\n"
+    elsif comment
+      m.recipient_user_id = comment.user_id
+      m.subject = I18n.t("models.moderation.commentmoderated")
+      m.body = I18n.t("models.moderation.commentmoderatedwhy", title: comment.story.title.to_s, url: comment.story.comments_url.to_s) <<
+        "\n" \
+        "> *#{comment.comment}*\n"
 
-      if self.reason.present?
+      if reason.present?
         m.body << "\n" <<
-          I18n.t('models.moderation.reasongiven') <<
-          "\n" <<
-          "> *#{self.reason}*\n"
+          I18n.t("models.moderation.reasongiven") <<
+          "\n" \
+          "> *#{reason}*\n"
       end
 
     else
@@ -51,7 +51,7 @@ class Moderation < ApplicationRecord
     end
 
     m.body << "\n" <<
-      I18n.t('models.moderation.automatedmessage')
+      I18n.t("models.moderation.automatedmessage")
 
     m.save
   end

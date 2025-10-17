@@ -1,33 +1,33 @@
 class Vote < ApplicationRecord
   belongs_to :user
   belongs_to :story
-  belongs_to :comment, :optional => true
+  belongs_to :comment, optional: true
 
   COMMENT_REASONS = {
-    "O" => I18n.t('models.vote.offtopicvote'),
-    "I" => I18n.t('models.vote.incorrectvote'),
-    "M" => I18n.t('models.vote.metoovote'),
-    "T" => I18n.t('models.vote.trollvote'),
-    "S" => I18n.t('models.vote.spamvote'),
-    "" => I18n.t('models.vote.cancel')
+    "O" => I18n.t("models.vote.offtopicvote"),
+    "I" => I18n.t("models.vote.incorrectvote"),
+    "M" => I18n.t("models.vote.metoovote"),
+    "T" => I18n.t("models.vote.trollvote"),
+    "S" => I18n.t("models.vote.spamvote"),
+    "" => I18n.t("models.vote.cancel")
   }
 
   STORY_REASONS = {
-    "O" => I18n.t('models.vote.offtopicvote'),
-    "A" => I18n.t('models.vote.alreadypostedvote'),
-    "S" => I18n.t('models.vote.spamvote'),
-    "" => I18n.t('models.vote.cancel')
+    "O" => I18n.t("models.vote.offtopicvote"),
+    "A" => I18n.t("models.vote.alreadypostedvote"),
+    "S" => I18n.t("models.vote.spamvote"),
+    "" => I18n.t("models.vote.cancel")
   }
   OLD_STORY_REASONS = {
-    "Q" => "Low Quality",
+    "Q" => "Low Quality"
   }
 
   def self.votes_by_user_for_stories_hash(user, stories)
     votes = {}
 
-    Vote.where(:user_id => user, :story_id => stories,
-    :comment_id => nil).each do |v|
-      votes[v.story_id] = { :vote => v.vote, :reason => v.reason }
+    Vote.where(user_id: user, story_id: stories,
+      comment_id: nil).each do |v|
+      votes[v.story_id] = {vote: v.vote, reason: v.reason}
     end
 
     votes
@@ -37,11 +37,11 @@ class Vote < ApplicationRecord
     votes = {}
 
     Vote.where(
-      :user_id => user_id, :story_id => story_id
+      user_id: user_id, story_id: story_id
     ).where(
       "comment_id IS NOT NULL"
     ).each do |v|
-      votes[v.comment_id] = { :vote => v.vote, :reason => v.reason }
+      votes[v.comment_id] = {vote: v.vote, reason: v.reason}
     end
 
     votes
@@ -51,14 +51,13 @@ class Vote < ApplicationRecord
     if story_ids.empty?
       {}
     else
-      votes = self.where(
-        :user_id    => user_id,
-        :comment_id => nil,
-        :story_id   => story_ids,
+      votes = where(
+        user_id: user_id,
+        comment_id: nil,
+        story_id: story_ids
       )
-      votes.inject({}) do |memo, v|
-        memo[v.story_id] = { :vote => v.vote, :reason => v.reason }
-        memo
+      votes.each_with_object({}) do |v, memo|
+        memo[v.story_id] = {vote: v.vote, reason: v.reason}
       end
     end
   end
@@ -67,21 +66,20 @@ class Vote < ApplicationRecord
     if comment_ids.empty?
       {}
     else
-      votes = self.where(
-        :user_id    => user_id,
-        :comment_id => comment_ids,
+      votes = where(
+        user_id: user_id,
+        comment_id: comment_ids
       )
-      votes.inject({}) do |memo, v|
-        memo[v.comment_id] = { :vote => v.vote, :reason => v.reason }
-        memo
+      votes.each_with_object({}) do |v, memo|
+        memo[v.comment_id] = {vote: v.vote, reason: v.reason}
       end
     end
   end
 
   def self.vote_thusly_on_story_or_comment_for_user_because(vote, story_id,
-  comment_id, user_id, reason, update_counters = true)
-    v = Vote.where(:user_id => user_id, :story_id => story_id,
-      :comment_id => comment_id).first_or_initialize
+    comment_id, user_id, reason, update_counters = true)
+    v = Vote.where(user_id: user_id, story_id: story_id,
+      comment_id: comment_id).first_or_initialize
 
     if !v.new_record? && v.vote == vote
       return
@@ -94,19 +92,19 @@ class Vote < ApplicationRecord
       # unvote
       if vote == 0
         # neutralize previous vote
-        upvote = (v.vote == 1 ? -1 : 0)
-        downvote = (v.vote == -1 ? -1 : 0)
+        upvote = ((v.vote == 1) ? -1 : 0)
+        downvote = ((v.vote == -1) ? -1 : 0)
         v.destroy!
 
       # new vote or change vote
       else
         if !v.new_record?
-          upvote = (v.vote == 1 ? -1 : 0)
-          downvote = (v.vote == -1 ? -1 : 0)
+          upvote = ((v.vote == 1) ? -1 : 0)
+          downvote = ((v.vote == -1) ? -1 : 0)
         end
 
-        upvote += (vote == 1 ? 1 : 0)
-        downvote += (vote == -1 ? 1 : 0)
+        upvote += ((vote == 1) ? 1 : 0)
+        downvote += ((vote == -1) ? 1 : 0)
 
         v.vote = vote
         v.reason = reason
@@ -117,7 +115,7 @@ class Vote < ApplicationRecord
         if v.comment_id
           c = Comment.find(v.comment_id)
           if c.user_id != user_id
-            User.update_counters c.user_id, :karma => upvote - downvote
+            User.update_counters c.user_id, karma: upvote - downvote
           end
 
           c.give_upvote_or_downvote_and_recalculate_confidence!(upvote,
@@ -125,7 +123,7 @@ class Vote < ApplicationRecord
         else
           s = Story.find(v.story_id)
           if s.user_id != user_id
-            User.update_counters s.user_id, :karma => upvote - downvote
+            User.update_counters s.user_id, karma: upvote - downvote
           end
 
           s.give_upvote_or_downvote_and_recalculate_hotness!(upvote, downvote)

@@ -7,7 +7,7 @@ class Search
   attr_accessor :q, :what, :order
   attr_accessor :results, :page, :total_results, :per_page
 
-  validates_length_of :q, :minimum => 2
+  validates_length_of :q, minimum: 2
 
   def initialize
     @q = ""
@@ -30,25 +30,26 @@ class Search
   end
 
   def to_url_params
-    [ :q, :what, :order ].map{|p| "#{p}=#{CGI.escape(self.send(p).to_s)}"
-      }.join("&amp;")
+    [:q, :what, :order].map { |p|
+      "#{p}=#{CGI.escape(send(p).to_s)}"
+    }.join("&amp;")
   end
 
   def page_count
-    total = self.total_results.to_i
+    total = total_results.to_i
 
-    if total == -1 || total > self.max_matches
-      total = self.max_matches
+    if total == -1 || total > max_matches
+      total = max_matches
     end
 
-    ((total - 1) / self.per_page.to_i) + 1
+    ((total - 1) / per_page.to_i) + 1
   end
 
   def search_for_user!(user)
     # Extract domain query since it must be done separately
     domain = nil
-    words = self.q.to_s.split(" ").reject{|w|
-      if m = w.match(/^domain:(.+)$/)
+    words = q.to_s.split(" ").reject { |w|
+      if (m = w.match(/^domain:(.+)$/))
         domain = m[1]
       end
     }.join(" ")
@@ -58,14 +59,14 @@ class Search
     if domain.present?
       self.what = "stories"
       begin
-        reg = Regexp.new("//([^/]*\.)?#{domain}/")
+        reg = Regexp.new("//([^/]*.)?#{domain}/")
       rescue RegexpError
         return false
       end
 
       story_ids = Story.select(:id).where("`url` REGEXP '" +
-        ActiveRecord::Base.connection.quote_string(reg.source) + "'").
-        collect(&:id)
+        ActiveRecord::Base.connection.quote_string(reg.source) + "'")
+        .collect(&:id)
 
       if story_ids.empty?
         self.results = []
@@ -81,11 +82,11 @@ class Search
     # Build search based on 'what' parameter
     results_array = []
 
-    if self.what == "all" || self.what == "stories"
+    if what == "all" || what == "stories"
       results_array.concat(search_stories(query, story_ids))
     end
 
-    if self.what == "all" || self.what == "comments"
+    if what == "all" || what == "comments"
       results_array.concat(search_comments(query))
     end
 
@@ -96,19 +97,19 @@ class Search
     self.total_results = results_array.length
 
     # Paginate
-    offset = (self.page - 1) * self.per_page
-    self.results = results_array[offset, self.per_page] || []
+    offset = (page - 1) * per_page
+    self.results = results_array[offset, per_page] || []
 
-    if self.page > self.page_count && self.page_count > 0
-      self.page = self.page_count
+    if page > page_count && page_count > 0
+      self.page = page_count
     end
 
     # Bind votes for both types
-    if (self.what == "all" || self.what == "comments") && user
-      comment_results = self.results.select{|r| r.class == Comment }
+    if (what == "all" || what == "comments") && user
+      comment_results = results.select { |r| r.instance_of?(Comment) }
       if comment_results.any?
         votes = Vote.comment_votes_by_user_for_comment_ids_hash(user.id,
-          comment_results.map{|c| c.id })
+          comment_results.map { |c| c.id })
 
         comment_results.each do |r|
           if votes[r.id]
@@ -118,11 +119,11 @@ class Search
       end
     end
 
-    if (self.what == "all" || self.what == "stories") && user
-      story_results = self.results.select{|r| r.class == Story }
+    if (what == "all" || what == "stories") && user
+      story_results = results.select { |r| r.instance_of?(Story) }
       if story_results.any?
         votes = Vote.story_votes_by_user_for_story_ids_hash(user.id,
-          story_results.map{|s| s.id })
+          story_results.map { |s| s.id })
 
         story_results.each do |r|
           if votes[r.id]
@@ -131,7 +132,6 @@ class Search
         end
       end
     end
-
   rescue => e
     self.results = []
     self.total_results = -1
@@ -174,7 +174,7 @@ class Search
   def sort_results(results)
     case order
     when "newest"
-      results.sort_by{|r| r.created_at }.reverse
+      results.sort_by { |r| r.created_at }.reverse
     when "points"
       results.sort_by do |r|
         if r.is_a?(Story)
@@ -186,7 +186,7 @@ class Search
         end
       end.reverse
     else # relevance
-      results.sort_by{|r| r.respond_to?(:relevance) ? -r.relevance.to_f : 0 }
+      results.sort_by { |r| r.respond_to?(:relevance) ? -r.relevance.to_f : 0 }
     end
   end
 end

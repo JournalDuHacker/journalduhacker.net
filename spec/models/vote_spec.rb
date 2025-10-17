@@ -51,7 +51,7 @@ describe Vote do
 
   it "removes karma and upvote when downvoting an upvote" do
     s = Story.make!
-    c = Comment.make!(:story_id => s.id)
+    c = Comment.make!(story_id: s.id)
     expect(c.user.karma).to eq(0)
 
     u = User.make!
@@ -76,7 +76,7 @@ describe Vote do
 
   it "neutralizes karma and upvote when unvoting an upvote" do
     s = Story.make!
-    c = Comment.make!(:story_id => s.id)
+    c = Comment.make!(story_id: s.id)
 
     u = User.make!
 

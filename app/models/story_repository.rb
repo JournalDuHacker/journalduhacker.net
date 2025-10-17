@@ -13,7 +13,7 @@ class StoryRepository
     hottest = positive_ranked base_scope
     hottest = has_minimal_score hottest
     hottest = filter_hidden_and_tags hottest
-    hottest.order('hotness')
+    hottest.order("hotness")
   end
 
   def hidden
@@ -45,16 +45,16 @@ class StoryRepository
     10.times do |x|
       # grab the list of stories from the past n days, shifting out popular
       # stories that did gain traction
-      story_ids = stories.select(:id, :upvotes, :downvotes, :user_id).
-        where(Story.arel_table[:created_at].gt((RECENT_DAYS_OLD + x).days.ago)).
-        order("stories.created_at DESC").
-        reject{|s| s.score > HOT_STORY_POINTS }
+      story_ids = stories.select(:id, :upvotes, :downvotes, :user_id)
+        .where(Story.arel_table[:created_at].gt((RECENT_DAYS_OLD + x).days.ago))
+        .order("stories.created_at DESC")
+        .reject { |s| s.score > HOT_STORY_POINTS }
 
       if story_ids.length > StoriesPaginator::STORIES_PER_PAGE + 1
         # keep the top half (newest stories)
-        keep_ids = story_ids[0 .. ((StoriesPaginator::STORIES_PER_PAGE + 1) *
+        keep_ids = story_ids[0..((StoriesPaginator::STORIES_PER_PAGE + 1) *
           0.5)]
-        story_ids = story_ids[keep_ids.length - 1 ... story_ids.length]
+        story_ids = story_ids[keep_ids.length - 1...story_ids.length]
 
         # make the bottom half a random selection of older stories
         while keep_ids.length <= StoriesPaginator::STORIES_PER_PAGE + 1
@@ -62,7 +62,7 @@ class StoryRepository
           keep_ids.push story_ids.shift
         end
 
-        stories = Story.where(:id => keep_ids)
+        stories = Story.where(id: keep_ids)
         break
       end
     end
@@ -84,12 +84,13 @@ class StoryRepository
   end
 
   def top(length)
-    top = base_scope.where("created_at >= (NOW() - INTERVAL " <<
+    top = base_scope.where("created_at >= (NOW() - INTERVAL " \
       "#{length[:dur]} #{length[:intv].upcase})")
     top.order("#{Story.score_sql} DESC")
   end
 
-private
+  private
+
   def base_scope
     Story.unmerged.where(is_expired: false)
   end
@@ -110,7 +111,7 @@ private
 
   def hidden_arel
     if @user
-      hidden_arel = HiddenStory.arel_table.where(
+      HiddenStory.arel_table.where(
         HiddenStory.arel_table[:user_id].eq(@user.id)
       ).project(
         HiddenStory.arel_table[:story_id]

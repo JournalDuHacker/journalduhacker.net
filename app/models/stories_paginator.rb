@@ -14,10 +14,11 @@ class StoriesPaginator
     with_pagination_info @scope.limit(per_page + 1)
       .offset((@page - 1) * per_page)
       .includes(:user, :suggested_titles, :suggested_taggings,
-        :taggings => :tag)
+        taggings: :tag)
   end
 
-private
+  private
+
   def with_pagination_info(scope)
     scope = scope.to_a
     show_more = scope.count > per_page
@@ -30,8 +31,7 @@ private
     if @user
       votes = Vote.votes_by_user_for_stories_hash(@user.id, scope.map(&:id))
 
-      hs = HiddenStory.where(:user_id => @user.id, :story_id =>
-        scope.map(&:id)).map(&:story_id)
+      hs = HiddenStory.where(user_id: @user.id, story_id: scope.map(&:id)).map(&:story_id)
 
       scope.each do |s|
         if votes[s.id]

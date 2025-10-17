@@ -11,14 +11,14 @@ class Github
 
   def self.oauth_consumer
     OAuth::Consumer.new(self.CLIENT_ID, self.CLIENT_SECRET,
-      { :site => "https://api.github.com" })
+      {site: "https://api.github.com"})
   end
 
   def self.token_and_user_from_code(code)
     s = Sponge.new
     res = s.fetch("https://github.com/login/oauth/access_token", :post,
-      { :client_id => self.CLIENT_ID, :client_secret => self.CLIENT_SECRET,
-      :code => code })
+      {client_id: self.CLIENT_ID, client_secret: self.CLIENT_SECRET,
+       code: code})
     ps = CGI.parse(res)
     tok = ps["access_token"].first
 
@@ -26,15 +26,15 @@ class Github
       res = s.fetch("https://api.github.com/user?access_token=#{tok}")
       js = JSON.parse(res)
       if js && js["login"].present?
-        return [ tok, js["login"] ]
+        return [tok, js["login"]]
       end
     end
 
-    return [ nil, nil ]
+    [nil, nil]
   end
 
   def self.oauth_auth_url(state)
-    "https://github.com/login/oauth/authorize?client_id=#{self.CLIENT_ID}&" <<
+    "https://github.com/login/oauth/authorize?client_id=#{self.CLIENT_ID}&" \
       "state=#{state}"
   end
 end

@@ -14,10 +14,10 @@ class Countinual
       return
     end
 
-    if time
-      time = time.to_i
+    time = if time
+      time.to_i
     else
-      time = Time.now.to_i
+      Time.now.to_i
     end
 
     line = "#{@@API_KEY} #{counter} #{value} #{time}\n"

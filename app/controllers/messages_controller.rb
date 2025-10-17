@@ -1,10 +1,10 @@
 class MessagesController < ApplicationController
   before_action :require_logged_in_user
-  before_action :find_message, :only => [ :show, :destroy, :keep_as_new ]
+  before_action :find_message, only: [:show, :destroy, :keep_as_new]
 
   def index
     @cur_url = "/messages"
-    @title = I18n.t 'controllers.messages_controller.messagestitle'
+    @title = I18n.t "controllers.messages_controller.messagestitle"
 
     @new_message = Message.new
 
@@ -18,14 +18,14 @@ class MessagesController < ApplicationController
 
   def sent
     @cur_url = "/messages"
-    @title = I18n.t 'controllers.messages_controller.messagessenttitle'
+    @title = I18n.t "controllers.messages_controller.messagessenttitle"
 
     @direction = :out
     @messages = @user.undeleted_sent_messages
 
     @new_message = Message.new
 
-    render :action => "index"
+    render action: "index"
   end
 
   def create
@@ -39,10 +39,10 @@ class MessagesController < ApplicationController
     @messages = @user.undeleted_received_messages
 
     if @new_message.save
-      flash[:success] = I18n.t 'controllers.messages_controller.flashmsgsentto', :user => "#{@new_message.recipient.username.to_s}"
-      return redirect_to "/messages"
+      flash[:success] = I18n.t "controllers.messages_controller.flashmsgsentto", user: @new_message.recipient.username.to_s
+      redirect_to "/messages"
     else
-      render :action => "index"
+      render action: "index"
     end
   end
 
@@ -52,13 +52,13 @@ class MessagesController < ApplicationController
 
     if @message.author
       @new_message = Message.new
-      @new_message.recipient_username = (@message.author_user_id == @user.id ?
+      @new_message.recipient_username = ((@message.author_user_id == @user.id) ?
         @message.recipient.username : @message.author.username)
 
-      if @message.subject.match(/^re:/i)
-        @new_message.subject = @message.subject
+      @new_message.subject = if /^re:/i.match?(@message.subject)
+        @message.subject
       else
-        @new_message.subject = "Re: #{@message.subject}"
+        "Re: #{@message.subject}"
       end
     end
 
@@ -79,21 +79,21 @@ class MessagesController < ApplicationController
 
     @message.save!
 
-    flash[:success] = I18n.t 'controllers.messages_controller.flashdeletedmessage'
+    flash[:success] = I18n.t "controllers.messages_controller.flashdeletedmessage"
 
     if @message.author_user_id == @user.id
-      return redirect_to "/messages/sent"
+      redirect_to "/messages/sent"
     else
-      return redirect_to "/messages"
+      redirect_to "/messages"
     end
   end
 
   def batch_delete
     deleted = 0
 
-    params.each do |k,v|
-      if v.to_s == "1" && m = k.match(/^delete_(.+)$/)
-        if (message = Message.where(:short_id => m[1]).first)
+    params.each do |k, v|
+      if v.to_s == "1" && (m = k.match(/^delete_(.+)$/))
+        if (message = Message.where(short_id: m[1]).first)
           ok = false
           if message.author_user_id == @user.id
             message.deleted_by_author = true
@@ -112,38 +112,39 @@ class MessagesController < ApplicationController
       end
     end
 
-    flash[:success] = I18n.t 'controllers.messages_controller.flashdelmsg',  :nbmsg => "#{deleted}", :plural => "#{deleted == 1 ? "" : "s"}"
+    flash[:success] = I18n.t "controllers.messages_controller.flashdelmsg", nbmsg: deleted.to_s, plural: ("s" unless deleted == 1).to_s
 
     @user.update_unread_message_count!
 
-    return redirect_to "/messages"
+    redirect_to "/messages"
   end
 
   def keep_as_new
     @message.has_been_read = false
     @message.save
 
-    return redirect_to "/messages"
+    redirect_to "/messages"
   end
 
-private
+  private
+
   def message_params
     params.require(:message).permit(
-      :recipient_username, :subject, :body,
+      :recipient_username, :subject, :body
     )
   end
 
   def find_message
-    if @message = Message.where(:short_id => params[:message_id] ||
-    params[:id]).first
-      if (@message.author_user_id == @user.id ||
-      @message.recipient_user_id == @user.id)
+    if (@message = Message.where(short_id: params[:message_id] ||
+    params[:id]).first)
+      if @message.author_user_id == @user.id ||
+          @message.recipient_user_id == @user.id
         return true
       end
     end
 
-    flash[:error] = I18n.t 'controllers.messages_controller.flashcannotfindmsg'
+    flash[:error] = I18n.t "controllers.messages_controller.flashcannotfindmsg"
     redirect_to "/messages"
-    return false
+    false
   end
 end

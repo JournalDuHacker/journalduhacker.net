@@ -3,21 +3,21 @@ class Utils
     str = ""
     while str.length < len
       chr = OpenSSL::Random.random_bytes(1)
-      ord = chr.unpack('C')[0]
+      ord = chr.unpack1("C")
 
       #          0            9              A            Z              a            z
-      if (ord >= 48 && ord <= 57) || (ord >= 65 && ord <= 90) || (ord >= 97 && ord <= 122)
+      if ord.between?(48, 57) || ord.between?(65, 90) || ord.between?(97, 122)
         str += chr
       end
     end
 
-    return str
+    str
   end
 
   def silence_stream(*streams)
-    on_hold = streams.collect {|stream| stream.dup }
+    on_hold = streams.collect { |stream| stream.dup }
     streams.each do |stream|
-      stream.reopen("/dev/null")
+      stream.reopen(File::NULL)
       stream.sync = true
     end
     yield

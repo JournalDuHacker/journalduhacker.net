@@ -3,15 +3,16 @@ module ApplicationHelper
 
   def avatar_img(user, size)
     image_tag(user.avatar_url(size), {
-      :srcset => "#{user.avatar_url(size)} 1x, " <<
+      srcset: "#{user.avatar_url(size)} 1x, " \
         "#{user.avatar_url(size * 2)} 2x",
-      :class => "avatar",
-      :size => "#{size}x#{size}",
-      :alt => "#{user.username} avatar" })
+      class: "avatar",
+      size: "#{size}x#{size}",
+      alt: "#{user.username} avatar"
+    })
   end
 
   def break_long_words(str, len = 30)
-    safe_join(str.split(" ").map{|w|
+    safe_join(str.split(" ").map { |w|
       if w.length > len
         safe_join(w.split(/(.{#{len}})/), "<wbr>".html_safe)
       else
@@ -20,7 +21,7 @@ module ApplicationHelper
     }, " ")
   end
 
-  def errors_for(object, message=nil)
+  def errors_for(object, message = nil)
     html = ""
     unless object.errors.blank?
       html << "<div class=\"flash-error\">\n"
@@ -44,7 +45,7 @@ module ApplicationHelper
       "activerecord.errors.template.header",
       count: count,
       model: object_name,
-      default: "#{count} #{count == 1 ? 'error' : 'errors'} prohibited this #{object_name} from being saved"
+      default: "#{count} #{(count == 1) ? "error" : "errors"} prohibited this #{object_name} from being saved"
     )
     message = options[:message] || I18n.t(
       "activerecord.errors.template.body",
@@ -69,19 +70,19 @@ module ApplicationHelper
 
   def page_numbers_for_pagination(max, cur)
     if max <= MAX_PAGES
-      return (1 .. max).to_a
+      return (1..max).to_a
     end
 
-    pages = (cur - (MAX_PAGES / 2) + 1 .. cur + (MAX_PAGES / 2) - 1).to_a
+    pages = (cur - (MAX_PAGES / 2) + 1..cur + (MAX_PAGES / 2) - 1).to_a
 
     while pages[0] < 1
-      pages.push (pages.last + 1)
+      pages.push(pages.last + 1)
       pages.shift
     end
 
     while pages.last > max
       if pages[0] > 1
-        pages.unshift (pages[0] - 1)
+        pages.unshift(pages[0] - 1)
       end
       pages.pop
     end
@@ -112,21 +113,21 @@ module ApplicationHelper
       ago = "less than a minute ago"
     elsif secs < (60 * 60)
       mins = (secs / 60.0).floor
-      ago = "#{mins} minute#{mins == 1 ? "" : "s"} ago"
+      ago = "#{mins} minute#{"s" unless mins == 1} ago"
     elsif secs < (60 * 60 * 48)
       hours = (secs / 60.0 / 60.0).floor
-      ago = "#{hours} hour#{hours == 1 ? "" : "s"} ago"
+      ago = "#{hours} hour#{"s" unless hours == 1} ago"
     elsif secs < (60 * 60 * 24 * 30)
       days = (secs / 60.0 / 60.0 / 24.0).floor
-      ago = "#{days} day#{days == 1 ? "" : "s"} ago"
+      ago = "#{days} day#{"s" unless days == 1} ago"
     elsif secs < (60 * 60 * 24 * 365)
       months = (secs / 60.0 / 60.0 / 24.0 / 30.0).floor
-      ago = "#{months} month#{months == 1 ? "" : "s"} ago"
+      ago = "#{months} month#{"s" unless months == 1} ago"
     else
       years = (secs / 60.0 / 60.0 / 24.0 / 365.0).floor
-      ago = "#{years} year#{years == 1 ? "" : "s"} ago"
+      ago = "#{years} year#{"s" unless years == 1} ago"
     end
 
-    raw(content_tag(:span, ago, :title => time.strftime("%F %T %z")))
+    raw(content_tag(:span, ago, title: time.strftime("%F %T %z")))
   end
 end

@@ -10,7 +10,7 @@ class EmailParser
     begin
       # the mail gem stupidly spams STDERR while parsing e-mail, so silence
       # that stream to avoid anything getting back to postfix
-      Utils.silence_stream(STDERR) do
+      Utils.silence_stream($stderr) do
         @email = Mail.read_from_string(email_text)
       end
     rescue
@@ -33,21 +33,21 @@ class EmailParser
     return @sending_user if @sending_user
 
     if (user = User.where("mailing_list_mode > 0 AND mailing_list_token = ?",
-    user_token).first) && user.is_active?
+      user_token).first) && user.is_active?
       @sending_user = user
-      return user
+      user
     end
   end
 
   def parent
     return @parent if @parent
 
-    irt = self.email[:in_reply_to].to_s.gsub(/[^A-Za-z0-9@\.]/, "")
+    irt = email[:in_reply_to].to_s.gsub(/[^A-Za-z0-9@.]/, "")
 
-    if m = irt.match(/^comment\.([^\.]+)\.\d+@/)
-      @parent = Comment.where(:short_id => m[1]).first
-    elsif m = irt.match(/^story\.([^\.]+)\.\d+@/)
-      @parent = Story.where(:short_id => m[1]).first
+    if (m = irt.match(/^comment\.([^.]+)\.\d+@/))
+      @parent = Comment.where(short_id: m[1]).first
+    elsif (m = irt.match(/^story\.([^.]+)\.\d+@/))
+      @parent = Story.where(short_id: m[1]).first
     end
 
     @parent
@@ -58,12 +58,13 @@ class EmailParser
 
     @possible_charset = nil
 
-    if self.email.multipart?
+    if email.multipart?
       # parts[0] - multipart/alternative
       #  parts[0].parts[0] - text/plain
       #  parts[0].parts[1] - text/html
-      if (p = self.email.parts.first.parts.select{|p|
-      p.content_type.match(/text\/plain/i) }).any?
+      if (p = email.parts.first.parts.select { |p|
+        p.content_type.match(/text\/plain/i)
+      }).any?
         @body = p.first.body.to_s
 
         begin
@@ -72,8 +73,9 @@ class EmailParser
         end
 
       # parts[0] - text/plain
-      elsif (p = self.email.parts.select{|p|
-      p.content_type.match(/text\/plain/i) }).any?
+      elsif (p = email.parts.select { |p|
+        p.content_type.match(/text\/plain/i)
+      }).any?
         @body = p.first.body.to_s
 
         begin
@@ -83,17 +85,17 @@ class EmailParser
       end
 
     # simple one-part
-    elsif self.email.content_type.to_s.match(/text\/plain/)
-      @body = self.email.body.to_s
+    elsif /text\/plain/.match?(email.content_type.to_s)
+      @body = email.body.to_s
 
       begin
-        @possible_charset = self.email.content_type_parameters["charset"]
+        @possible_charset = email.content_type_parameters["charset"]
       rescue
       end
 
-    elsif !self.email.content_type.to_s.present?
+    elsif !email.content_type.to_s.present?
       # no content-type header, assume it's text/plain
-      @body = self.email.body.to_s
+      @body = email.body.to_s
     end
 
     # try to remove sig lines

@@ -17,10 +17,10 @@ module Lobsters
     config.autoload_lib(ignore: %w[assets tasks monkey.rb])
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %W(#{config.root}/extras)
+    config.autoload_paths += %W[#{config.root}/extras]
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    config.time_zone = 'Europe/Paris'
+    config.time_zone = "Europe/Paris"
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.default_locale = :fr
@@ -30,7 +30,7 @@ module Lobsters
 
     config.cache_store = :file_store, "#{config.root}/tmp/cache/"
 
-    config.exceptions_app = self.routes
+    config.exceptions_app = routes
 
     # Rails 6.0+ requires permitted classes for YAML deserialization
     # Required for activerecord-typedstore gem
@@ -60,8 +60,8 @@ class << Rails.application
 
   def root_url
     Rails.application.routes.url_helpers.root_url({
-      :host => Rails.application.domain,
-      :protocol => Rails.application.ssl? ? "https" : "http",
+      host: Rails.application.domain,
+      protocol: Rails.application.ssl? ? "https" : "http"
     })
   end
 

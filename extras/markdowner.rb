@@ -9,7 +9,7 @@ class Markdowner
     exts = [:tagfilter, :autolink, :strikethrough]
     root = CommonMarker.render_doc(text.to_s, [:SMART], exts)
 
-    walk_text_nodes(root){|n| postprocess_text_node(n) }
+    walk_text_nodes(root) { |n| postprocess_text_node(n) }
 
     ng = Nokogiri::HTML(root.to_html(:DEFAULT, exts))
 
@@ -24,7 +24,11 @@ class Markdowner
 
     # make links have rel=nofollow
     ng.css("a").each do |h|
-      h[:rel] = "nofollow" unless (URI.parse(h[:href]).host.nil? rescue false)
+      h[:rel] = "nofollow" unless begin
+        URI.parse(h[:href]).host.nil?
+      rescue
+        false
+      end
     end
 
     ng.at_css("body").inner_html.strip
@@ -41,14 +45,14 @@ class Markdowner
 
   def self.postprocess_text_node(node)
     while node
-      return unless node.string_content =~ /\B(@#{User::VALID_USERNAME})/
+      return unless node.string_content =~ /\B(@#{User::VALID_USERNAME})/o
       before, user, after = $`, $1, $'
 
       node.string_content = before
 
-      if User.exists?(:username => user[1..-1])
+      if User.exists?(username: user[1..])
         link = CommonMarker::Node.new(:link)
-        link.url = "/u/#{user[1..-1]}"
+        link.url = "/u/#{user[1..]}"
         node.insert_after(link)
 
         link_text = CommonMarker::Node.new(:text)

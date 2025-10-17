@@ -3,51 +3,51 @@ class User < ApplicationRecord
     -> { includes :user }
   has_many :comments
   has_many :sent_messages,
-    :class_name => "Message",
-    :foreign_key => "author_user_id"
+    class_name: "Message",
+    foreign_key: "author_user_id"
   has_many :received_messages,
-    :class_name => "Message",
-    :foreign_key => "recipient_user_id"
+    class_name: "Message",
+    foreign_key: "recipient_user_id"
   has_many :tag_filters
   has_many :tag_filter_tags,
-    :class_name => "Tag",
-    :through => :tag_filters,
-    :source => :tag,
-    :dependent => :delete_all
+    class_name: "Tag",
+    through: :tag_filters,
+    source: :tag,
+    dependent: :delete_all
   belongs_to :invited_by_user,
-    :class_name => "User",
-    :optional => true
+    class_name: "User",
+    optional: true
   belongs_to :banned_by_user,
-    :class_name => "User",
-    :optional => true
+    class_name: "User",
+    optional: true
   belongs_to :disabled_invite_by_user,
-    :class_name => "User",
-    :optional => true
+    class_name: "User",
+    optional: true
   has_many :invitations
   has_many :votes
-  has_many :voted_stories, -> { where('votes.comment_id' => nil) },
-    :through => :votes,
-    :source => :story
+  has_many :voted_stories, -> { where("votes.comment_id" => nil) },
+    through: :votes,
+    source: :story
   has_many :upvoted_stories,
-    -> { where('votes.comment_id' => nil, 'votes.vote' => 1) },
-    :through => :votes,
-    :source => :story
+    -> { where("votes.comment_id" => nil, "votes.vote" => 1) },
+    through: :votes,
+    source: :story
   has_many :hats
 
   has_secure_password
 
   typed_store :settings do |s|
-    s.boolean :email_notifications, :default => false
-    s.boolean :email_replies, :default => false
-    s.boolean :pushover_replies, :default => false
+    s.boolean :email_notifications, default: false
+    s.boolean :email_replies, default: false
+    s.boolean :pushover_replies, default: false
     s.string :pushover_user_key
-    s.boolean :email_messages, :default => false
-    s.boolean :pushover_messages, :default => false
-    s.boolean :email_mentions, :default => false
-    s.boolean :show_avatars, :default => true
-    s.boolean :show_story_previews, :default => false
-    s.boolean :show_submitted_story_threads, :default => false
-    s.boolean :hide_dragons, :default => false
+    s.boolean :email_messages, default: false
+    s.boolean :pushover_messages, default: false
+    s.boolean :email_mentions, default: false
+    s.boolean :show_avatars, default: true
+    s.boolean :show_story_previews, default: false
+    s.boolean :show_submitted_story_threads, default: false
+    s.boolean :hide_dragons, default: false
     s.string :totp_secret
     s.string :github_oauth_token
     s.string :github_username
@@ -56,33 +56,33 @@ class User < ApplicationRecord
     s.string :twitter_username
   end
 
-  validates :email, :format => { :with => /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/ },
-    :uniqueness => { :case_sensitive => false }
+  validates :email, format: {with: /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/},
+    uniqueness: {case_sensitive: false}
 
-  validates :password, :presence => true, :on => :create
+  validates :password, presence: true, on: :create
 
   VALID_USERNAME = /[A-Za-z0-9][A-Za-z0-9_-]{0,24}/
   validates :username,
-    :format => { :with => /\A#{VALID_USERNAME}\z/ },
-    :uniqueness => { :case_sensitive => false }
+    format: {with: /\A#{VALID_USERNAME}\z/o},
+    uniqueness: {case_sensitive: false}
 
-  validates_each :username do |record,attr,value|
+  validates_each :username do |record, attr, value|
     if BANNED_USERNAMES.include?(value.to_s.downcase)
       record.errors.add(attr, "is not permitted")
     end
   end
 
-  scope :active, -> { where(:banned_at => nil, :deleted_at => nil) }
+  scope :active, -> { where(banned_at: nil, deleted_at: nil) }
 
   before_save :check_session_token
-  before_validation :on => :create do
-    self.create_rss_token
-    self.create_mailing_list_token
+  before_validation on: :create do
+    create_rss_token
+    create_mailing_list_token
   end
 
-  BANNED_USERNAMES = [ "admin", "administrator", "contact", "fraud", "guest",
+  BANNED_USERNAMES = ["admin", "administrator", "contact", "fraud", "guest",
     "help", "hostmaster", "mailer-daemon", "moderator", "moderators", "nobody",
-    "postmaster", "root", "security", "support", "sysop", "webmaster" ]
+    "postmaster", "root", "security", "support", "sysop", "webmaster"]
 
   # days old accounts are considered new for
   NEW_USER_DAYS = 7
@@ -112,46 +112,46 @@ class User < ApplicationRecord
       :username,
       :created_at,
       :is_admin,
-      :is_moderator,
+      :is_moderator
     ]
 
-    if !self.is_admin?
+    if !is_admin?
       attrs.push :karma
     end
 
     attrs.push :about
 
-    h = super(:only => attrs)
+    h = super(only: attrs)
 
-    h[:avatar_url] = self.avatar_url
+    h[:avatar_url] = avatar_url
 
-    if self.github_username.present?
-      h[:github_username] = self.github_username
+    if github_username.present?
+      h[:github_username] = github_username
     end
 
-    if self.twitter_username.present?
-      h[:twitter_username] = self.twitter_username
+    if twitter_username.present?
+      h[:twitter_username] = twitter_username
     end
 
     h
   end
 
   def authenticate_totp(code)
-    totp = ROTP::TOTP.new(self.totp_secret)
+    totp = ROTP::TOTP.new(totp_secret)
     totp.verify(code)
   end
 
   def avatar_url(size = 100)
     "https://secure.gravatar.com/avatar/" +
-      Digest::MD5.hexdigest(self.email.strip.downcase) +
+      Digest::MD5.hexdigest(email.strip.downcase) +
       "?r=pg&d=identicon&s=#{size}"
   end
 
   def average_karma
-    if (k = self.karma) == 0
+    if (k = karma) == 0
       0
     else
-      k.to_f / (self.stories_submitted_count + self.comments_posted_count)
+      k.to_f / (stories_submitted_count + comments_posted_count)
     end
   end
 
@@ -163,18 +163,18 @@ class User < ApplicationRecord
     msg = Message.new
     msg.deleted_by_author = true
     msg.author_user_id = disabler.id
-    msg.recipient_user_id = self.id
+    msg.recipient_user_id = id
     msg.subject = "Your invite privileges have been revoked"
-    msg.body = "The reason given:\n" <<
-      "\n" <<
-      "> *#{reason}*\n" <<
-      "\n" <<
+    msg.body = "The reason given:\n" \
+      "\n" \
+      "> *#{reason}*\n" \
+      "\n" \
       "*This is an automated message.*"
     msg.save
 
     m = Moderation.new
     m.moderator_user_id = disabler.id
-    m.user_id = self.id
+    m.user_id = id
     m.action = "Disabled invitations"
     m.reason = reason
     m.save!
@@ -187,13 +187,13 @@ class User < ApplicationRecord
     self.banned_by_user_id = banner.id
     self.banned_reason = reason
 
-    self.delete!
+    delete!
 
     BanNotification.notify(self, banner, reason)
 
     m = Moderation.new
     m.moderator_user_id = banner.id
-    m.user_id = self.id
+    m.user_id = id
     m.action = "Banned"
     m.reason = reason
     m.save!
@@ -216,109 +216,109 @@ class User < ApplicationRecord
         return true
       end
     elsif obj.is_a?(Comment) && obj.is_downvotable?
-      return !self.is_new? && (self.karma >= MIN_KARMA_TO_DOWNVOTE)
+      return !is_new? && (karma >= MIN_KARMA_TO_DOWNVOTE)
     end
 
     false
   end
 
   def can_invite?
-    !banned_from_inviting? && self.can_submit_stories?
+    !banned_from_inviting? && can_submit_stories?
   end
 
   def can_offer_suggestions?
-    !self.is_new? && (self.karma >= MIN_KARMA_TO_SUGGEST)
+    !is_new? && (karma >= MIN_KARMA_TO_SUGGEST)
   end
 
   def can_submit_stories?
-    self.karma >= MIN_KARMA_TO_SUBMIT_STORIES
+    karma >= MIN_KARMA_TO_SUBMIT_STORIES
   end
 
   def check_session_token
-    if self.session_token.blank?
+    if session_token.blank?
       self.session_token = Utils.random_str(60)
     end
   end
 
   def create_mailing_list_token
-    if self.mailing_list_token.blank?
+    if mailing_list_token.blank?
       self.mailing_list_token = Utils.random_str(10)
     end
   end
 
   def create_rss_token
-    if self.rss_token.blank?
+    if rss_token.blank?
       self.rss_token = Utils.random_str(60)
     end
   end
 
   def comments_posted_count
-    Keystore.value_for("user:#{self.id}:comments_posted").to_i
+    Keystore.value_for("user:#{id}:comments_posted").to_i
   end
 
   def update_comments_posted_count!
-    Keystore.put("user:#{self.id}:comments_posted", self.comments.active.count)
+    Keystore.put("user:#{id}:comments_posted", comments.active.count)
   end
 
   def delete!
     User.transaction do
-      self.comments.each{|c| c.delete_for_user(self) }
+      comments.each { |c| c.delete_for_user(self) }
 
-      self.sent_messages.each do |m|
+      sent_messages.each do |m|
         m.deleted_by_author = true
         m.save
       end
-      self.received_messages.each do |m|
+      received_messages.each do |m|
         m.deleted_by_recipient = true
         m.save
       end
 
-      self.invitations.destroy_all
+      invitations.destroy_all
 
       self.session_token = nil
-      self.check_session_token
+      check_session_token
 
       self.deleted_at = Time.now
-      self.save!
+      save!
     end
   end
 
   def undelete!
     User.transaction do
-      self.comments.each{|c| c.undelete_for_user(self) }
+      comments.each { |c| c.undelete_for_user(self) }
 
-      self.sent_messages.each do |m|
+      sent_messages.each do |m|
         m.deleted_by_author = false
         m.save
       end
-      self.received_messages.each do |m|
+      received_messages.each do |m|
         m.deleted_by_recipient = false
         m.save
       end
 
       self.deleted_at = nil
-      self.save!
+      save!
     end
   end
 
   def disable_2fa!
     self.totp_secret = nil
-    self.save!
+    save!
   end
 
   def grant_moderatorship_by_user!(user)
     User.transaction do
       self.is_moderator = true
-      self.save!
+      save!
 
       m = Moderation.new
       m.moderator_user_id = user.id
-      m.user_id = self.id
+      m.user_id = id
       m.action = "Granted moderator status"
       m.save!
 
       h = Hat.new
-      h.user_id = self.id
+      h.user_id = id
       h.granted_by_user_id = user.id
       h.hat = "Sysop"
       h.save!
@@ -329,13 +329,13 @@ class User < ApplicationRecord
 
   def initiate_password_reset_for_ip(ip)
     self.password_reset_token = "#{Time.now.to_i}-#{Utils.random_str(30)}"
-    self.save!
+    save!
 
     PasswordReset.password_reset_link(self, ip).deliver_now
   end
 
   def has_2fa?
-    self.totp_secret.present?
+    totp_secret.present?
   end
 
   def is_active?
@@ -347,39 +347,39 @@ class User < ApplicationRecord
   end
 
   def is_new?
-    Time.now - self.created_at <= NEW_USER_DAYS.days
+    Time.now - created_at <= NEW_USER_DAYS.days
   end
 
   def linkified_about
-    Markdowner.to_html(self.about)
+    Markdowner.to_html(about)
   end
 
   def most_common_story_tag
     Tag.active.joins(
       :stories
     ).where(
-      :stories => { :user_id => self.id }
+      stories: {user_id: id}
     ).group(
       Tag.arel_table[:id]
     ).order(
-      'COUNT(*) desc'
+      "COUNT(*) desc"
     ).first
   end
 
   def pushover!(params)
-    if self.pushover_user_key.present?
-      Pushover.push(self.pushover_user_key, params)
+    if pushover_user_key.present?
+      Pushover.push(pushover_user_key, params)
     end
   end
 
   def recent_threads(amount, include_submitted_stories = false)
-    thread_ids = self.comments.group(:thread_id).order('MAX(created_at) DESC').
-      limit(amount).pluck(:thread_id)
+    thread_ids = comments.group(:thread_id).order("MAX(created_at) DESC")
+      .limit(amount).pluck(:thread_id)
 
-    if include_submitted_stories && self.show_submitted_story_threads
-      thread_ids += Comment.joins(:story).
-        where(:stories => { :user_id => self.id }).group(:thread_id).
-        order("MAX(comments.created_at) DESC").limit(amount).pluck(:thread_id)
+    if include_submitted_stories && show_submitted_story_threads
+      thread_ids += Comment.joins(:story)
+        .where(stories: {user_id: id}).group(:thread_id)
+        .order("MAX(comments.created_at) DESC").limit(amount).pluck(:thread_id)
 
       thread_ids = thread_ids.uniq.sort.reverse[0, amount]
     end
@@ -388,7 +388,7 @@ class User < ApplicationRecord
   end
 
   def stories_submitted_count
-    Keystore.value_for("user:#{self.id}:stories_submitted").to_i
+    Keystore.value_for("user:#{id}:stories_submitted").to_i
   end
 
   def to_param
@@ -400,11 +400,11 @@ class User < ApplicationRecord
     self.banned_by_user_id = nil
     self.banned_reason = nil
     self.deleted_at = nil
-    self.save!
+    save!
 
     m = Moderation.new
     m.moderator_user_id = unbanner.id
-    m.user_id = self.id
+    m.user_id = id
     m.action = "Unbanned"
     m.save!
 
@@ -415,11 +415,11 @@ class User < ApplicationRecord
     self.disabled_invite_at = nil
     self.disabled_invite_by_user_id = nil
     self.disabled_invite_reason = nil
-    self.save!
+    save!
 
     m = Moderation.new
     m.moderator_user_id = mod.id
-    m.user_id = self.id
+    m.user_id = id
     m.action = "Enabled invitations"
     m.save!
 
@@ -427,26 +427,26 @@ class User < ApplicationRecord
   end
 
   def undeleted_received_messages
-    received_messages.where(:deleted_by_recipient => false)
+    received_messages.where(deleted_by_recipient: false)
   end
 
   def undeleted_sent_messages
-    sent_messages.where(:deleted_by_author => false)
+    sent_messages.where(deleted_by_author: false)
   end
 
   def unread_message_count
-    Keystore.value_for("user:#{self.id}:unread_messages").to_i
+    Keystore.value_for("user:#{id}:unread_messages").to_i
   end
 
   def update_unread_message_count!
-    Keystore.put("user:#{self.id}:unread_messages",
-      self.received_messages.unread.count)
+    Keystore.put("user:#{id}:unread_messages",
+      received_messages.unread.count)
   end
 
   def votes_for_others
-    self.votes.joins(:story, :comment).
-      where("comments.user_id <> votes.user_id AND " <<
-        "stories.user_id <> votes.user_id").
-      order("id DESC")
+    votes.joins(:story, :comment)
+      .where("comments.user_id <> votes.user_id AND " \
+        "stories.user_id <> votes.user_id")
+      .order("id DESC")
   end
 end

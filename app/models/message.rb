@@ -1,23 +1,25 @@
 class Message < ApplicationRecord
   belongs_to :recipient,
-    :class_name => "User",
-    :foreign_key => "recipient_user_id"
+    class_name: "User",
+    foreign_key: "recipient_user_id"
   belongs_to :author,
-    :class_name => "User",
-    :foreign_key => "author_user_id"
+    class_name: "User",
+    foreign_key: "author_user_id"
 
   validates_presence_of :recipient
 
-  attr_accessor :recipient_username
+  attr_reader :recipient_username
 
-  validates_length_of :subject, :in => 1..150
-  validates_length_of :body, :maximum => (64 * 1024)
+  validates_length_of :subject, in: 1..150
+  validates_length_of :body, maximum: (64 * 1024)
 
-  scope :unread, -> { where(:has_been_read => false,
-    :deleted_by_recipient => false) }
+  scope :unread, -> {
+    where(has_been_read: false,
+      deleted_by_recipient: false)
+  }
 
   before_validation :assign_short_id,
-    :on => :create
+    on: :create
   after_create :deliver_email_notifications
   after_save :update_unread_counts
   after_save :check_for_both_deleted
@@ -27,42 +29,42 @@ class Message < ApplicationRecord
   end
 
   def author_username
-    if self.author
-      self.author.username
+    if author
+      author.username
     else
       "System"
     end
   end
 
   def check_for_both_deleted
-    if self.deleted_by_author? && self.deleted_by_recipient?
-      self.destroy
+    if deleted_by_author? && deleted_by_recipient?
+      destroy
     end
   end
 
   def update_unread_counts
-    self.recipient.update_unread_message_count!
+    recipient.update_unread_message_count!
   end
 
   def deliver_email_notifications
     return if Rails.env.development?
 
-    if self.recipient.email_messages?
+    if recipient.email_messages?
       begin
-        EmailMessage.notify(self, self.recipient).deliver_now
+        EmailMessage.notify(self, recipient).deliver_now
       rescue => e
-        Rails.logger.error "error e-mailing #{self.recipient.email}: #{e}"
+        Rails.logger.error "error e-mailing #{recipient.email}: #{e}"
       end
     end
 
-    if self.recipient.pushover_messages?
-      self.recipient.pushover!({
-        :title => "#{Rails.application.name} message from " <<
-          "#{self.author_username}: #{self.subject}",
-        :message => self.plaintext_body,
-        :url => self.url,
-        :url_title => (self.author ? "Reply to #{self.author_username}" :
-          "View message"),
+    if recipient.pushover_messages?
+      recipient.pushover!({
+        title: "#{Rails.application.name} message from " \
+          "#{author_username}: #{subject}",
+        message: plaintext_body,
+        url: url,
+        url_title: (author ? "Reply to #{author_username}" :
+          "View message")
       })
     end
   end
@@ -70,7 +72,7 @@ class Message < ApplicationRecord
   def recipient_username=(username)
     self.recipient_user_id = nil
 
-    if u = User.where(:username => username).first
+    if (u = User.where(username: username).first)
       self.recipient_user_id = u.id
       @recipient_username = username
     else
@@ -79,14 +81,14 @@ class Message < ApplicationRecord
   end
 
   def linkified_body
-    Markdowner.to_html(self.body)
+    Markdowner.to_html(body)
   end
 
   def plaintext_body
-    self.body.to_s
+    body.to_s
   end
 
   def url
-    Rails.application.root_url + "messages/#{self.short_id}"
+    Rails.application.root_url + "messages/#{short_id}"
   end
 end

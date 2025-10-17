@@ -1,6 +1,6 @@
 class SearchController < ApplicationController
   def index
-    @title = I18n.t 'controllers.search_controller.searchtitle'
+    @title = I18n.t "controllers.search_controller.searchtitle"
     @cur_url = "/search"
 
     @search = Search.new
@@ -23,11 +23,11 @@ class SearchController < ApplicationController
           @search.search_for_user!(@user)
         rescue => e
           Rails.logger.error("Search error: #{e.message}")
-          flash[:error] = I18n.t 'controllers.search_controller.flasherrorsearchcontroller'
+          flash[:error] = I18n.t "controllers.search_controller.flasherrorsearchcontroller"
         end
       end
     end
 
-    render :action => "index"
+    render action: "index"
   end
 end

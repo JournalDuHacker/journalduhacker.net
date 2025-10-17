@@ -1,8 +1,8 @@
 Lobsters::Application.routes.draw do
-  scope :format => "html" do
-    root :to => "home#index",
-      :protocol => (Rails.application.config.force_ssl ? "https://" : "http://"),
-      :as => "root"
+  scope format: "html" do
+    root to: "home#index",
+      protocol: (Rails.application.config.force_ssl ? "https://" : "http://"),
+      as: "root"
 
     get "/404" => "home#four_oh_four", :via => :all
 
@@ -62,9 +62,9 @@ Lobsters::Application.routes.draw do
       post "hide"
       post "unhide"
       get "suggest"
-      post "suggest", :action => "submit_suggestions"
+      post "suggest", action: "submit_suggestions"
     end
-    post "/stories/fetch_url_attributes", :format => "json"
+    post "/stories/fetch_url_attributes", format: "json"
     post "/stories/preview" => "stories#preview"
 
     resources :comments do

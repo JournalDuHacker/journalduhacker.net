@@ -1,13 +1,13 @@
 class InvitationRequest < ApplicationRecord
-  validates :name, :presence => true
-  validates :email, :format => { :with => /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/ }
-  validates :memo, :format => { :with => /https?:\/\// }
+  validates :name, presence: true
+  validates :email, format: {with: /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/}
+  validates :memo, format: {with: /https?:\/\//}
 
   before_validation :create_code
   after_create :send_email
 
   def self.verified_count
-    InvitationRequest.where(:is_verified => true).count
+    InvitationRequest.where(is_verified: true).count
   end
 
   def create_code
@@ -17,14 +17,14 @@ class InvitationRequest < ApplicationRecord
       end
 
       self.code = Utils.random_str(15)
-      unless InvitationRequest.exists?(:code => self.code)
+      unless InvitationRequest.exists?(code: code)
         break
       end
     end
   end
 
   def markeddown_memo
-    Markdowner.to_html(self.memo)
+    Markdowner.to_html(memo)
   end
 
   def send_email

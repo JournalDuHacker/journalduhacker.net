@@ -1,9 +1,9 @@
 class SignupController < ApplicationController
-  before_action :require_logged_in_user, :only => :invite
+  before_action :require_logged_in_user, only: :invite
 
   def index
     if @user
-      flash[:error] = I18n.t 'controllers.signup_controller.signedup'
+      flash[:error] = I18n.t "controllers.signup_controller.signedup"
       return redirect_to "/"
     end
 
@@ -11,17 +11,17 @@ class SignupController < ApplicationController
   end
 
   def invite
-    @title = I18n.t 'controllers.signup_controller.signuptitle'
+    @title = I18n.t "controllers.signup_controller.signuptitle"
   end
 
   def invited
     if @user
-      flash[:error] = I18n.t 'controllers.signup_controller.invalidinv'
+      flash[:error] = I18n.t "controllers.signup_controller.invalidinv"
       return redirect_to "/"
     end
 
-    if !(@invitation = Invitation.where(:code => params[:invitation_code].to_s).first)
-      flash[:error] = I18n.t 'controllers.signup_controller.invalidinv'
+    if !(@invitation = Invitation.where(code: params[:invitation_code].to_s).first)
+      flash[:error] = I18n.t "controllers.signup_controller.invalidinv"
       return redirect_to "/signup"
     end
 
@@ -30,12 +30,12 @@ class SignupController < ApplicationController
     @new_user = User.new
     @new_user.email = @invitation.email
 
-    render :action => "invited"
+    render action: "invited"
   end
 
   def signup
-    if !(@invitation = Invitation.where(:code => params[:invitation_code].to_s).first)
-      flash[:error] = I18n.t 'controllers.signup_controller.invalidinv'
+    if !(@invitation = Invitation.where(code: params[:invitation_code].to_s).first)
+      flash[:error] = I18n.t "controllers.signup_controller.invalidinv"
       return redirect_to "/signup"
     end
 
@@ -47,22 +47,23 @@ class SignupController < ApplicationController
     if @new_user.save
       @invitation.destroy
       session[:u] = @new_user.session_token
-      flash[:success] = I18n.t 'controllers.signup_controller.flashsuccesssignupcontroller'
+      flash[:success] = I18n.t "controllers.signup_controller.flashsuccesssignupcontroller"
 
       Countinual.count!("#{Rails.application.shortname}.users.created", "+1")
       Countinual.count!("#{Rails.application.shortname}.users.total",
         User.count)
 
-      return redirect_to "/signup/invite"
+      redirect_to "/signup/invite"
     else
-      render :action => "invited"
+      render action: "invited"
     end
   end
 
-private
+  private
+
   def user_params
     params.require(:user).permit(
-      :username, :email, :password, :password_confirmation, :about,
+      :username, :email, :password, :password_confirmation, :about
     )
   end
 end

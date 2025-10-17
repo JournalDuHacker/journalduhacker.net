@@ -1,5 +1,5 @@
 class EmailMessage < ActionMailer::Base
-  default :from => "#{Rails.application.name} " <<
+  default from: "#{Rails.application.name} " \
     "<nobody@#{Rails.application.domain}>"
 
   def notify(message, user)
@@ -7,8 +7,8 @@ class EmailMessage < ActionMailer::Base
     @user = user
 
     mail(
-      :to => user.email,
-      :subject => I18n.t('mailers.email_message.subject', :appname => "#{Rails.application.name}", :author => "#{message.author_username}", :subject => "#{message.subject}")
+      to: user.email,
+      subject: I18n.t("mailers.email_message.subject", appname: Rails.application.name.to_s, author: message.author_username.to_s, subject: message.subject.to_s)
     )
   end
 end
