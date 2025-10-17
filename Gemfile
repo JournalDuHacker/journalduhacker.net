@@ -33,6 +33,9 @@ gem "commonmarker", "~> 0.21"
 
 gem "activerecord-typedstore"
 
+# SEO: Sitemap generation
+gem "sitemap_generator"
+
 # for twitter-posting bot
 gem "oauth"
 

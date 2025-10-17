@@ -4,7 +4,9 @@ class UsersController < ApplicationController
 
   def show
     @showing_user = User.where(username: params[:username]).first!
-    @title = "User #{@showing_user.username}"
+    @title = "Profil de #{@showing_user.username}"
+    @meta_description = "Profil de #{@showing_user.username} sur Journal du hacker. Karma: #{@showing_user.karma}. Membre depuis #{@showing_user.created_at.strftime("%B %Y")}."
+    @canonical_url = user_url(@showing_user.username)
 
     respond_to do |format|
       format.html { render action: "show" }

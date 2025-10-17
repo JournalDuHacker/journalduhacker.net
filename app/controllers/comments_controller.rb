@@ -218,6 +218,7 @@ class CommentsController < ApplicationController
                    href: "/comments.rss#{"?token=#{@user.rss_token}" if @user}"}
 
     @heading = @title = I18n.t "controllers.comments_controller.commentstitle"
+    @meta_description = "Les derniers commentaires sur Journal du hacker. Suivez les discussions les plus récentes de la communauté tech francophone."
     @cur_url = "/comments"
 
     @page = params[:page].to_i

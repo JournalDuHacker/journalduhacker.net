@@ -1,3 +1,39 @@
+<%# Schema.org structured data for SEO %>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DiscussionForumPosting",
+  "headline": <%= @story.title.to_json %>,
+  <% if @story.description.present? %>
+  "articleBody": <%= strip_tags(@story.markeddown_description).to_json %>,
+  <% end %>
+  "url": "<%= @story.comments_url %>",
+  "datePublished": "<%= @story.created_at.iso8601 %>",
+  "author": {
+    "@type": "Person",
+    "name": "<%= @story.user.username %>"
+  },
+  "interactionStatistic": {
+    "@type": "InteractionCounter",
+    "interactionType": "https://schema.org/CommentAction",
+    "userInteractionCount": <%= @story.comments_count %>
+  },
+  "discussionUrl": "<%= @story.comments_url %>",
+  "commentCount": <%= @story.comments_count %>,
+  <% if @story.url.present? %>
+  "sharedContent": {
+    "@type": "WebPage",
+    "url": "<%= @story.url %>"
+  },
+  <% end %>
+  "publisher": {
+    "@type": "Organization",
+    "name": "<%= Rails.application.name %>",
+    "url": "<%= Rails.application.root_url %>"
+  }
+}
+</script>
+
 <ol class="stories">
   <%= render :partial => "stories/listdetail",
     :locals => { :story => @story, :single_story => true } %>

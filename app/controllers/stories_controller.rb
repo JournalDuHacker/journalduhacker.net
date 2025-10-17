@@ -132,6 +132,12 @@ class StoriesController < ApplicationController
 
     @title = @story.title
     @short_url = @story.short_id_url
+    @canonical_url = @story.comments_url
+
+    # SEO: Meta description
+    description_text = @story.description_or_story_cache(160)
+    @meta_description = description_text.present? ? description_text :
+      "#{@story.comments_count} commentaire#{"s" unless @story.comments_count == 1} sur #{@story.title}"
 
     @comments = @story.merged_comments.includes(:user, :story, :hat,
       votes: :user).arrange_for_user(@user)
@@ -140,14 +146,27 @@ class StoriesController < ApplicationController
       format.html {
         @comment = @story.comments.build
 
+        # Extract first image from story description for OpenGraph
+        og_image = if @story.markeddown_description.present?
+          helpers.extract_first_image(@story.markeddown_description)
+        end
+        og_image ||= Rails.application.root_url + "apple-touch-icon-144.png"
+
+        # Social media meta tags (Twitter + OpenGraph)
         @meta_tags = {
-          "twitter:card" => "summary",
-          "twitter:site" => "@lobsters",
+          "twitter:card" => og_image.include?("apple-touch-icon") ? "summary" : "summary_large_image",
+          "twitter:site" => "@journalduhacker",
           "twitter:title" => @story.title,
-          "twitter:description" => "#{@story.comments_count} comment" \
-            "#{"s" unless @story.comments_count == 1}",
-          "twitter:image" => Rails.application.root_url +
-            "apple-touch-icon-144.png"
+          "twitter:description" => @meta_description,
+          "twitter:image" => og_image,
+          "og:type" => "article",
+          "og:title" => @story.title,
+          "og:description" => @meta_description,
+          "og:url" => @story.comments_url,
+          "og:image" => og_image,
+          "og:site_name" => Rails.application.name,
+          "article:published_time" => @story.created_at.iso8601,
+          "article:author" => @story.user.username
         }
 
         if @story.user.twitter_username.present?

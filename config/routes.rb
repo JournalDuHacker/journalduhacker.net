@@ -6,6 +6,9 @@ Lobsters::Application.routes.draw do
 
     get "/404" => "home#four_oh_four", :via => :all
 
+    # Sitemap
+    get "/sitemap.xml" => redirect("/sitemap.xml.gz")
+
     get "/rss" => "home#index", :format => "rss"
     get "/hottest" => "home#index", :format => "json"
 

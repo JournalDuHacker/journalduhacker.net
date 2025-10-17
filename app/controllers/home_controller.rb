@@ -16,14 +16,17 @@ class HomeController < ApplicationController
 
   def about
     @title = I18n.t "controllers.home_controller.abouttitle"
+    @meta_description = "À propos de Journal du hacker, la communauté francophone de partage d'actualités tech, programmation et hacking. Découvrez notre histoire et nos valeurs."
   end
 
   def chat
     @title = I18n.t "controllers.home_controller.chattitle"
+    @meta_description = "Rejoignez le chat de la communauté Journal du hacker pour discuter en temps réel de technologie, programmation et sécurité informatique."
   end
 
   def privacy
     @title = I18n.t "controllers.home_controller.privacytitle"
+    @meta_description = "Politique de confidentialité de Journal du hacker. Découvrez comment nous collectons et utilisons vos données personnelles sur notre plateforme."
   end
 
   def hidden
@@ -47,8 +50,11 @@ class HomeController < ApplicationController
     @comments_rss_link ||= {title: "Comments - RSS 2.0",
                             href: "/comments.rss#{"?token=#{@user.rss_token}" if @user}"}
 
-    @heading = @title = ""
+    @heading = ""
+    @title = "Actualités Tech, Hacking et Programmation"
+    @meta_description = "Journal du hacker - Communauté francophone de partage et discussion d'actualités sur la technologie, la programmation, la sécurité et le hacking. Découvrez les meilleurs liens tech du moment."
     @cur_url = "/"
+    @canonical_url = Rails.application.root_url.chomp("/")
 
     respond_to do |format|
       format.html { render action: "index" }
@@ -69,6 +75,7 @@ class HomeController < ApplicationController
     }
 
     @heading = @title = I18n.t "controllers.home_controller.neweststoriestitle"
+    @meta_description = "Les dernières actualités tech et liens partagés sur Journal du hacker, par ordre chronologique."
     @cur_url = "/newest"
 
     @rss_link = {title: "RSS 2.0 - Newest Items",
@@ -137,6 +144,7 @@ class HomeController < ApplicationController
     }
 
     @heading = @title = @tag.description.blank? ? @tag.tag : @tag.description
+    @meta_description = "Actualités et discussions tagguées '#{@tag.tag}' sur Journal du hacker. #{@tag.description}"
     @cur_url = tag_url(@tag.tag)
 
     @rss_link = {title: "RSS 2.0 - Tagged #{@tag.tag} (#{@tag.description})",

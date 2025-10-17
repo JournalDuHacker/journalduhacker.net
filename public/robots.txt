@@ -1,1 +1,30 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# Journal du hacker - robots.txt
+# See https://www.robotstxt.org/robotstxt.html for documentation
+
+User-agent: *
+Allow: /
+Allow: /s/
+Allow: /t/
+Allow: /u/
+Allow: /newest
+Allow: /recent
+Allow: /top
+Allow: /about
+Allow: /privacy
+Allow: /search
+
+# Disallow private and user-specific pages
+Disallow: /login
+Disallow: /signup
+Disallow: /settings
+Disallow: /messages
+Disallow: /hidden
+Disallow: /filters
+Disallow: /invitations
+Disallow: /threads
+Disallow: /stories/new
+Disallow: /stories/*/edit
+Disallow: /comments/*/reply
+
+# Sitemap location
+Sitemap: https://journalduhacker.net/sitemap.xml
