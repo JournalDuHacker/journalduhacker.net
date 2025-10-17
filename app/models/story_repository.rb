@@ -64,6 +64,11 @@ class StoryRepository
 
         stories = Story.where(id: keep_ids)
         break
+      elsif story_ids.any?
+        # Even if we don't have enough stories for pagination,
+        # still filter out high-scoring stories
+        stories = Story.where(id: story_ids.map(&:id))
+        break
       end
     end
 
