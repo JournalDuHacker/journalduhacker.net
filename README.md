@@ -4,8 +4,8 @@
 
 **La plateforme francophone de partage de liens tech pour les hackers, développeurs et passionnés**
 
-[![Rails](https://img.shields.io/badge/Rails-4.2.8-red.svg)](https://rubyonrails.org/)
-[![Ruby](https://img.shields.io/badge/Ruby-2.x-red.svg)](https://www.ruby-lang.org/)
+[![Rails](https://img.shields.io/badge/Rails-8-green.svg)](https://rubyonrails.org/)
+[![Ruby](https://img.shields.io/badge/Ruby-3.3-green.svg)](https://www.ruby-lang.org/)
 [![License](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-journalduhacker.net-green.svg)](https://www.journalduhacker.net)
 
