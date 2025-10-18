@@ -72,8 +72,8 @@ describe StoryRepository do
 
   describe "#newest" do
     it "returns stories ordered by creation date DESC" do
-      old_story = Story.make!(title: "old", created_at: 2.days.ago)
-      new_story = Story.make!(title: "new", created_at: 1.hour.ago)
+      Story.make!(title: "old", created_at: 2.days.ago)
+      Story.make!(title: "new", created_at: 1.hour.ago)
 
       stories = repo_no_user.newest.to_a
       expect(stories.first.created_at).to be > stories.last.created_at
@@ -108,8 +108,8 @@ describe StoryRepository do
     end
 
     it "orders by id DESC (newest first)" do
-      s1 = Story.make!(user_id: user.id, title: "first")
-      s2 = Story.make!(user_id: user.id, title: "second")
+      Story.make!(user_id: user.id, title: "first")
+      Story.make!(user_id: user.id, title: "second")
 
       stories = repo.newest_by_user(user).to_a
       expect(stories.first.id).to be > stories.last.id
@@ -131,7 +131,7 @@ describe StoryRepository do
   describe "#recent" do
     it "returns recent stories" do
       recent = Story.make!(title: "recent", created_at: 1.day.ago)
-      old = Story.make!(title: "old", created_at: 10.days.ago)
+      Story.make!(title: "old", created_at: 10.days.ago)
 
       stories = repo_no_user.recent
       expect(stories).to include(recent)
@@ -192,8 +192,8 @@ describe StoryRepository do
 
     it "orders by creation date DESC" do
       tag = Tag.find_by(tag: "tag1") || Tag.create!(tag: "tag1", description: "Tag 1")
-      old = Story.make!(title: "old", tags_a: ["tag1"], created_at: 2.days.ago)
-      new = Story.make!(title: "new", tags_a: ["tag1"], created_at: 1.hour.ago)
+      Story.make!(title: "old", tags_a: ["tag1"], created_at: 2.days.ago)
+      Story.make!(title: "new", tags_a: ["tag1"], created_at: 1.hour.ago)
 
       stories = repo_no_user.tagged(tag).to_a
       expect(stories.first.created_at).to be > stories.last.created_at
@@ -304,7 +304,7 @@ describe StoryRepository do
     it "allows filtering multiple tags" do
       tag1 = Tag.find_or_create_by!(tag: "tag1") { |t| t.description = "Tag 1" }
       tag2 = Tag.find_or_create_by!(tag: "tag2") { |t| t.description = "Tag 2" }
-      tag3 = Tag.find_or_create_by!(tag: "tag3") { |t| t.description = "Tag 3" }
+      Tag.find_or_create_by!(tag: "tag3") { |t| t.description = "Tag 3" }
 
       s1 = Story.make!(title: "has tag1", tags_a: ["tag1"])
       s2 = Story.make!(title: "has tag2", tags_a: ["tag2"])

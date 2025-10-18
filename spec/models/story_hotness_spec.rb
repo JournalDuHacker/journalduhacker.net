@@ -31,8 +31,8 @@ describe Story, "hotness calculations" do
 
     it "considers tag hotness modifiers" do
       # Create a tag with positive hotness_mod (makes story colder)
-      hot_tag = Tag.create!(tag: "hottag", description: "hot", hotness_mod: 2.0)
-      cold_tag = Tag.create!(tag: "coldtag", description: "cold", hotness_mod: -2.0)
+      Tag.create!(tag: "hottag", description: "hot", hotness_mod: 2.0)
+      Tag.create!(tag: "coldtag", description: "cold", hotness_mod: -2.0)
 
       s1 = Story.make!(title: "with hot tag", tags_a: ["hottag"])
       s2 = Story.make!(title: "with cold tag", tags_a: ["coldtag"])

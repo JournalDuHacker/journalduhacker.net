@@ -99,7 +99,7 @@ describe Tag do
   describe "story associations" do
     it "has many taggings" do
       tag = Tag.create!(tag: "test", description: "Test")
-      story = Story.make!(tags_a: ["test"])
+      Story.make!(tags_a: ["test"])
 
       expect(tag.taggings.count).to be > 0
     end
@@ -121,7 +121,7 @@ describe Tag do
 
   describe "tag filtering" do
     it "prevents stories from having only media tags" do
-      media_tag = Tag.create!(tag: "video", description: "Video", is_media: true)
+      Tag.create!(tag: "video", description: "Video", is_media: true)
 
       expect {
         Story.make!(tags_a: ["video"])
@@ -130,7 +130,7 @@ describe Tag do
 
     it "allows stories with mix of media and non-media tags" do
       Tag.create!(tag: "audio", description: "Audio", is_media: true)
-      normal_tag = Tag.find_by(tag: "tag1") || Tag.create!(tag: "tag1", description: "Normal")
+      Tag.find_by(tag: "tag1") || Tag.create!(tag: "tag1", description: "Normal")
 
       expect {
         Story.make!(tags_a: ["tag1", "audio"])
@@ -140,8 +140,8 @@ describe Tag do
 
   describe "hotness impact on stories" do
     it "affects story hotness calculation" do
-      hot_tag = Tag.create!(tag: "trending", description: "Trending", hotness_mod: -1.0)
-      cold_tag = Tag.create!(tag: "boring", description: "Boring", hotness_mod: 1.0)
+      Tag.create!(tag: "trending", description: "Trending", hotness_mod: -1.0)
+      Tag.create!(tag: "boring", description: "Boring", hotness_mod: 1.0)
 
       story_hot = Story.make!(title: "hot story", tags_a: ["trending"])
       story_cold = Story.make!(title: "cold story", tags_a: ["boring"])

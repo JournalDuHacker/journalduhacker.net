@@ -59,7 +59,7 @@ describe Moderation do
     end
 
     it "tracks tag-related actions in action field" do
-      tag = Tag.create!(tag: "test", description: "Test tag")
+      Tag.create!(tag: "test", description: "Test tag")
       mod = Moderation.create!(
         moderator_user_id: moderator.id,
         action: "Created tag: test"

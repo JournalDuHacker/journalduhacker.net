@@ -53,7 +53,7 @@ describe Invitation do
     end
 
     it "tracks invitations by user" do
-      inv = Invitation.create!(
+      Invitation.create!(
         user_id: inviter.id,
         email: "test@example.com",
         code: "testcode"

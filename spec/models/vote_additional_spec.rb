@@ -227,7 +227,7 @@ describe Vote, "additional scenarios" do
       comment = Comment.make!(story_id: story.id, comment: "test")
       user = User.make!
 
-      initial_hotness = story.hotness
+      story.hotness
 
       Vote.vote_thusly_on_story_or_comment_for_user_because(
         1, story.id, comment.id, user.id, nil

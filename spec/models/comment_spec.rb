@@ -314,7 +314,7 @@ describe Comment do
 
     it "shows moderation message when moderated" do
       c = Comment.make!(user_id: author.id, comment: "test", is_moderated: true)
-      m = Moderation.create!(comment_id: c.id, moderator_user_id: moderator.id, reason: "spam")
+      Moderation.create!(comment_id: c.id, moderator_user_id: moderator.id, reason: "spam")
 
       text = c.gone_text
       expect(text).to include("mod_user")

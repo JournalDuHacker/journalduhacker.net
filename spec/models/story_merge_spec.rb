@@ -113,7 +113,7 @@ describe Story, "merging and suggestions" do
     end
 
     it "prevents suggestions on privileged tags" do
-      priv_tag = Tag.create!(tag: "privtag", description: "privileged", privileged: true)
+      Tag.create!(tag: "privtag", description: "privileged", privileged: true)
       mod = User.make!(is_moderator: true)
       s = Story.make!(user_id: mod.id, title: "test", tags_a: ["privtag"])
 
@@ -233,8 +233,8 @@ describe Story, "merging and suggestions" do
 
     it "excludes deleted comments from count" do
       s = Story.make!(title: "test")
-      c1 = Comment.make!(story_id: s.id, comment: "visible")
-      c2 = Comment.make!(story_id: s.id, comment: "deleted", is_deleted: true)
+      Comment.make!(story_id: s.id, comment: "visible")
+      Comment.make!(story_id: s.id, comment: "deleted", is_deleted: true)
 
       s.update_comments_count!
       s.reload
