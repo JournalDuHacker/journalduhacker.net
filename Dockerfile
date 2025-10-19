@@ -23,11 +23,11 @@ RUN apt-get update -qq && \
 # Set working directory
 WORKDIR /app
 
-# Copy only Gemfile first (better caching)
-COPY Gemfile ./
+# Copy Gemfile and Gemfile.lock first (better caching)
+COPY Gemfile Gemfile.lock ./
 
-# Install gems - this will generate Gemfile.lock with Rails 5.2
-RUN bundle install --jobs 4 --retry 3
+# Install gems - exclude development and test groups for production
+RUN bundle install --jobs 4 --retry 3 --without development test
 
 # Now copy the rest of the application code
 COPY . .
