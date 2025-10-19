@@ -58,12 +58,12 @@ class BlogPost < ApplicationRecord
   end
 
   def cache_markdown
-    if body.to_s.strip.start_with?("<")
-      self.markeddown_body = body.to_s
+    self.markeddown_body = if body.to_s.strip.start_with?("<")
+      body.to_s
     else
-      self.markeddown_body = Markdowner.to_html(body, allow_images: true)
+      Markdowner.to_html(body, allow_images: true)
     end
-  rescue StandardError
+  rescue
     self.markeddown_body = body.to_s
   end
 end

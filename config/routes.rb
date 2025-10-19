@@ -67,7 +67,7 @@ Lobsters::Application.routes.draw do
       get "/" => redirect("https://www.journalduhacker.net/blog", status: 301)
     end
 
-    get "/blog.rss" => "blog_posts#index", defaults: { format: :rss }
+    get "/blog.rss" => "blog_posts#index", :defaults => {format: :rss}
     resources :blog_posts, path: "blog", param: :slug
 
     resources :stories do

@@ -13,7 +13,7 @@ module Pluxml
       (?<slug>.+)
       \.xml
       \z
-    /x.freeze
+    /x
 
     Result = Struct.new(:created, :updated, :skipped, keyword_init: true) do
       def increment!(key)
@@ -32,7 +32,6 @@ module Pluxml
 
     def initialize(source_root: Rails.root.join("tmp", "blog"),
       destination_medias_dir: Rails.root.join("public", "data", "medias"))
-
       @source_articles_dir = Pathname(source_root).join("articles")
       @source_medias_dir = Pathname(source_root).join("medias")
       @destination_medias_dir = Pathname(destination_medias_dir)
@@ -92,7 +91,7 @@ module Pluxml
         else
           result.increment!(:skipped)
         end
-      rescue StandardError => e
+      rescue => e
         raise "Failed to import #{file_path}: #{e.message}"
       ensure
         BlogPost.record_timestamps = true
@@ -167,7 +166,7 @@ module Pluxml
       user.about = mapping[:name] if mapping[:name]
       user.save!
       user
-    rescue StandardError => e
+    rescue => e
       Rails.logger.error "Failed to resolve author #{author_code}: #{e.message}"
       default_user
     end
