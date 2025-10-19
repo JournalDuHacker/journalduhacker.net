@@ -1,4 +1,4 @@
-class AddUserSettingPostThreads < ActiveRecord::Migration
+class AddUserSettingPostThreads < ActiveRecord::Migration[8.0]
   def change
     add_column "users", "show_submitted_story_threads", :boolean,
       :default => true

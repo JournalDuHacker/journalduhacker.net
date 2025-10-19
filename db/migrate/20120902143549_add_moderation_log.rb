@@ -1,4 +1,4 @@
-class AddModerationLog < ActiveRecord::Migration
+class AddModerationLog < ActiveRecord::Migration[8.0]
   def up
     add_column "users", "is_moderator", :boolean, :default => false
 

@@ -1,4 +1,4 @@
-class AddFulltextIndexes < ActiveRecord::Migration
+class AddFulltextIndexes < ActiveRecord::Migration[8.0]
   def up
     # Add FULLTEXT index on stories table
     execute "ALTER TABLE stories ADD FULLTEXT INDEX fulltext_stories (title, description, url)"
