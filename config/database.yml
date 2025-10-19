@@ -2,7 +2,7 @@ development:
   adapter: mysql2
   encoding: utf8mb4
   reconnect: false
-  database: journalduhacker_dev
+  database: <%= ENV['DATABASE_NAME'] || 'journalduhacker_dev' %>
   pool: 5
   username: <%= ENV['DATABASE_USER'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
@@ -13,7 +13,7 @@ test:
   adapter: mysql2
   encoding: utf8mb4
   reconnect: false
-  database: journalduhacker_test
+  database: <%= ENV['DATABASE_NAME'] || 'journalduhacker_test' %>
   pool: 5
   username: <%= ENV['DATABASE_USER'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
@@ -24,6 +24,7 @@ production:
   adapter: mysql2
   encoding: utf8mb4
   reconnect: false
+  database: <%= ENV['DATABASE_NAME'] || 'journalduhacker' %>
   username: <%= ENV['DATABASE_USER'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
   host: <%= ENV['DATABASE_HOST'] || 'db' %>
