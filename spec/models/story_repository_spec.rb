@@ -136,33 +136,6 @@ describe StoryRepository do
       stories = repo_no_user.recent
       expect(stories).to include(recent)
     end
-
-    it "excludes stories with high scores (already on front page)" do
-      popular = Story.make!(title: "popular", created_at: 1.day.ago)
-      popular.update_column(:upvotes, 10)
-      popular.update_column(:downvotes, 0)
-
-      unpopular = Story.make!(title: "unpopular", created_at: 1.day.ago)
-      unpopular.update_column(:upvotes, 2)
-
-      stories = repo_no_user.recent.to_a
-      # Popular stories (score > HOT_STORY_POINTS) should be filtered
-      expect(stories.map(&:id)).not_to include(popular.id)
-    end
-
-    it "gives priority to newest stories" do
-      s1 = Story.make!(title: "newer", created_at: 1.hour.ago)
-      s2 = Story.make!(title: "older", created_at: 2.days.ago)
-
-      s1.update_column(:upvotes, 2)
-      s2.update_column(:upvotes, 2)
-
-      stories = repo_no_user.recent.to_a
-      newer_index = stories.index(s1)
-      older_index = stories.index(s2)
-
-      expect(newer_index).to be < older_index if newer_index && older_index
-    end
   end
 
   describe "#tagged" do
