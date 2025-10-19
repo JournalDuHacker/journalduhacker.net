@@ -1,0 +1,16 @@
+<div class="box wide">
+  <div class="legend">
+    Modifier l'article
+  </div>
+
+  <%= form_for @blog_post do |f| %>
+    <%= render partial: "form", locals: { f: f } %>
+
+    <div class="box">
+      <div class="boxline actions">
+        <%= f.submit "Mettre à jour" %>
+        <%= link_to "Voir l'article", blog_post_path(@blog_post) %>
+      </div>
+    </div>
+  <% end %>
+</div>

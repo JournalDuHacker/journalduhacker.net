@@ -1,0 +1,47 @@
+<div class="box wide">
+  <div class="legend">
+    Blog
+    <% if current_user_admin? %>
+      <span class="actions">
+        <%= link_to "Nouvel article", new_blog_post_path %>
+      </span>
+    <% end %>
+  </div>
+
+  <% if @blog_posts.any? %>
+    <% @blog_posts.each do |post| %>
+      <div class="boxline">
+        <h2>
+          <%= link_to post.title, blog_post_path(post) %>
+        </h2>
+        <div class="meta">
+          Publié le <%= l(post.published_at, format: :long) %> par <%= post.user.username %>
+          <% if post.draft? %>
+            <span class="blog-status blog-status--draft">Brouillon</span>
+          <% elsif !post.published? %>
+            <span class="blog-status blog-status--scheduled">À paraître</span>
+          <% end %>
+        </div>
+        <p><%= post.summary(360) %></p>
+        <p><%= link_to "Lire la suite →", blog_post_path(post) %></p>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="boxline">
+      Aucun article publié pour le moment.
+    </div>
+  <% end %>
+</div>
+
+<div class="box">
+  <div class="boxline actions">
+    <% if @page > 1 %>
+      <%= link_to "Articles plus récents", blog_posts_path(page: @page - 1) %>
+    <% end %>
+
+    <% if @show_more %>
+      <% if @page > 1 %> | <% end %>
+      <%= link_to "Articles précédents", blog_posts_path(page: @page + 1) %>
+    <% end %>
+  </div>
+</div>

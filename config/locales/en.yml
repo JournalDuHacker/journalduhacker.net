@@ -5,6 +5,7 @@ en:
   time:
     formats:
       default: "%Y-%m-%d %H:%M:%S"
+      long: "%B %d, %Y %H:%M"
   mailers:
     email_message:
       subject: "[%{appname}] Private Message from %{author}: %{subject}"
@@ -60,6 +61,7 @@ en:
       homelink: "Home"
       recentlink: "Recent"
       commentslink: "Comments"
+      bloglink: "Blog"
       yourthreadslink: "Your Threads"
       submitstorylink: "Submit Story"
       searchlink: "Search"

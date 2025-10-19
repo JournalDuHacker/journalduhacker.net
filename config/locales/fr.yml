@@ -37,6 +37,7 @@ fr:
   time:
     formats:
       default: "%d-%m-%Y %H:%M:%S"
+      long: "%d %B %Y à %Hh%M"
   mailers:
     email_message:
       subject: "[%{appname}] Message privé de %{author} : %{subject}"
@@ -92,6 +93,7 @@ fr:
       homelink: "Accueil"
       recentlink: "Récents"
       commentslink: "Commentaires"
+      bloglink: "Blog"
       yourthreadslink: "Vos sujets"
       submitstorylink: "Soumettre"
       searchlink: "Recherche"

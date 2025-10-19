@@ -1,0 +1,25 @@
+<div class="box wide">
+  <div class="legend">
+    <%= @blog_post.title %>
+    <% if current_user_admin? %>
+      <span class="actions">
+        <%= link_to "Modifier", edit_blog_post_path(@blog_post) %> |
+        <%= link_to "Supprimer", blog_post_path(@blog_post), method: :delete, data: { confirm: "Supprimer cet article ?" } %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="boxline">
+    <div class="meta">
+      Publié le <%= l(@blog_post.published_at, format: :long) %> par <%= @blog_post.user.username %>
+      <% if @blog_post.draft? %>
+        <span class="blog-status blog-status--draft">Brouillon</span>
+      <% elsif !@blog_post.published? %>
+        <span class="blog-status blog-status--scheduled">À paraître</span>
+      <% end %>
+    </div>
+    <div class="markdown">
+      <%= raw @blog_post.markeddown_body %>
+    </div>
+  </div>
+</div>
