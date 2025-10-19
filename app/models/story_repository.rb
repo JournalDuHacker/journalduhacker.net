@@ -40,31 +40,42 @@ class StoryRepository
     stories = newest
 
     # try to help recently-submitted stories that didn't gain traction
-    story_ids = []
+    filtered_ids = []
 
     10.times do |x|
       # grab the list of stories from the past n days, shifting out popular
       # stories that did gain traction
-      story_ids = stories.select(:id, :upvotes, :downvotes, :user_id)
+      story_candidates = stories.select(:id, :upvotes, :downvotes, :user_id)
         .where(Story.arel_table[:created_at].gt((RECENT_DAYS_OLD + x).days.ago))
         .order("stories.created_at DESC")
-        .reject { |s| s.score > HOT_STORY_POINTS }
+        .to_a
 
-      if story_ids.length > StoriesPaginator::STORIES_PER_PAGE + 1
+      story_candidates.reject! { |s| s.score > HOT_STORY_POINTS }
+      filtered_ids = story_candidates.map(&:id)
+
+      if story_candidates.length > StoriesPaginator::STORIES_PER_PAGE + 1
         # keep the top half (newest stories)
-        keep_ids = story_ids[0..((StoriesPaginator::STORIES_PER_PAGE + 1) *
+        keep = story_candidates[0..((StoriesPaginator::STORIES_PER_PAGE + 1) *
           0.5)]
-        story_ids = story_ids[keep_ids.length - 1...story_ids.length]
+        remainder = story_candidates[keep.length - 1...story_candidates.length]
+        remainder ||= []
 
         # make the bottom half a random selection of older stories
-        while keep_ids.length <= StoriesPaginator::STORIES_PER_PAGE + 1
-          story_ids.shuffle!
-          keep_ids.push story_ids.shift
+        while keep.length <= StoriesPaginator::STORIES_PER_PAGE + 1 && remainder.any?
+          remainder.shuffle!
+          keep.push remainder.shift
         end
 
-        stories = Story.where(id: keep_ids)
+        filtered_ids = keep.map(&:id)
+        stories = Story.where(id: filtered_ids)
         break
       end
+    end
+
+    if filtered_ids.present? && !stories.is_a?(ActiveRecord::Relation)
+      stories = Story.where(id: filtered_ids)
+    elsif filtered_ids.present? && stories.is_a?(ActiveRecord::Relation)
+      stories = stories.where(id: filtered_ids)
     end
 
     stories.order("stories.created_at DESC")
