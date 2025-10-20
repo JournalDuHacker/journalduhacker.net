@@ -6,11 +6,11 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - "v*"
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: flemzord/journalduhacker.net
+  IMAGE_NAME: journalduhacker/journalduhacker.net
 
 jobs:
   rspec:

@@ -42,7 +42,7 @@ La façon la plus rapide de démarrer le projet en local :
 
 ```bash
 # Clone le repository
-git clone https://github.com/flemzord/journalduhacker.net.git
+git clone https://github.com/journalduhacker/journalduhacker.net.git
 cd journalduhacker
 
 # Lance avec Docker Compose (la config DB est déjà gérée !)
@@ -73,7 +73,7 @@ docker-compose exec web bundle exec rake db:setup
 1. **Clone le repository**
 
 ```bash
-git clone https://github.com/flemzord/journalduhacker.net.git
+git clone https://github.com/journalduhacker/journalduhacker.net.git
 cd journalduhacker
 ```
 

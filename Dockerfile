@@ -2,7 +2,7 @@
 FROM ruby:3.3
 
 # OCI Image labels
-LABEL org.opencontainers.image.source=https://github.com/flemzord/journalduhacker.net
+LABEL org.opencontainers.image.source=https://github.com/journalduhacker/journalduhacker.net
 LABEL org.opencontainers.image.description="Journal du Hacker - A Hacker News like platform for French-speaking developers"
 LABEL org.opencontainers.image.licenses=AGPL
 
