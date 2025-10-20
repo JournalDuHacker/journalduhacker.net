@@ -26,8 +26,8 @@ WORKDIR /app
 # Copy Gemfile and Gemfile.lock first (better caching)
 COPY Gemfile Gemfile.lock ./
 
-# Install gems - exclude development and test groups for production
-RUN bundle install --jobs 4 --retry 3 --without development test
+# Install gems
+RUN bundle install --jobs 4 --retry 3
 
 # Now copy the rest of the application code
 COPY . .

@@ -13,22 +13,34 @@ services:
       - ./tmp:/tmp
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
   web:
     build: .
     command: bash -c "bundle exec rake db:migrate && bundle exec rails server -b 0.0.0.0"
     volumes:
       - .:/app
-#      - bundle_cache:/usr/local/bundle
+    #      - bundle_cache:/usr/local/bundle
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - mailpit
     environment:
       DATABASE_HOST: db
       DATABASE_USER: journalduhacker
       DATABASE_PASSWORD: journalduhacker
       DATABASE_NAME: journalduhacker_dev
       RAILS_ENV: development
+      SMTP_ADDRESS: mailpit
+      SMTP_PORT: 1025
     stdin_open: true
     tty: true
 
