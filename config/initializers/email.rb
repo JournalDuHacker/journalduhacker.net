@@ -1,3 +1,8 @@
+# Default FROM email for all mailers
+ActionMailer::Base.default_options = {
+  from: "Journal du hacker <noreply@journalduhacker.net>"
+}
+
 smtp_settings = {
   address: ENV.fetch("SMTP_ADDRESS", "127.0.0.1"),
   port: ENV.fetch("SMTP_PORT", "25").to_i,
