@@ -1,0 +1,33 @@
+<% if f.object.errors.any? %>
+  <%= error_messages_for f.object %>
+<% end %>
+
+<div class="box">
+  <div class="boxline">
+    <%= f.label :title, "Titre", class: "required" %>
+    <%= f.text_field :title, autofocus: true %>
+  </div>
+
+  <div class="boxline">
+    <%= f.label :slug, "Slug", class: "normal" %>
+    <%= f.text_field :slug, placeholder: "laisser vide pour générer automatiquement" %>
+  </div>
+
+  <div class="boxline">
+    <%= f.label :published_at, "Date de publication", class: "required" %>
+    <%= f.datetime_select :published_at, minute_step: 5 %>
+  </div>
+
+  <div class="boxline">
+    <%= f.check_box :draft %>
+    <%= f.label :draft, "Enregistrer comme brouillon", class: "normal" %>
+  </div>
+
+  <div class="boxline">
+    <%= f.label :body, "Contenu", class: "required" %>
+    <%= f.text_area :body, rows: 18 %>
+    <div class="markdown_help">
+      <%= render partial: "global/markdownhelp", locals: { allow_images: true } %>
+    </div>
+  </div>
+</div>

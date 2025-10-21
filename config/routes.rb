@@ -57,6 +57,19 @@ Lobsters::Application.routes.draw do
     get "/search" => "search#index"
     get "/search/:q" => "search#index"
 
+    legacy_host_constraint = lambda { |req|
+      req.host =~ /\A(blog\.journalduhacker\.net|localhost|127\.0\.0\.1)\z/i
+    }
+
+    constraints(legacy_host_constraint) do
+      get "/feed.php" => "legacy_blog#feed"
+      get "/index.php" => "legacy_blog#article"
+      get "/" => redirect("https://www.journalduhacker.net/blog", status: 301)
+    end
+
+    get "/blog.rss" => "blog_posts#index", :defaults => {format: :rss}
+    resources :blog_posts, path: "blog", param: :slug
+
     resources :stories do
       post "upvote"
       post "downvote"

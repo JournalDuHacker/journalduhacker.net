@@ -59,7 +59,8 @@
         <% links = {
           "/" => @cur_url == "/" ? Rails.application.name : t('.homelink'),
           "/recent" => t('.recentlink'),
-          "/comments" => t('.commentslink')
+          "/comments" => t('.commentslink'),
+          "/blog" => t('.bloglink')
         } %>
 
         <% if @user && @user.can_submit_stories? %>
@@ -140,7 +141,7 @@
           <% end %>
           <a href="/privacy"><%= t('.privacylink') %></a>
           <a href="/about"><%= t('.aboutlink') %></a>
-          <a href="https://blog.journalduhacker.net"><%= t('.blog') %></a>
+          <a href="/blog"><%= t('.blog') %></a>
           <a href="https://diaspora-fr.org/people/2869e360d32501396cf10ade3d3189c4"><%= t('.diaspora') %></a>
           <a href="https://framapiaf.org/@journalduhacker"><%= t('.mastodon') %></a>
         <% end %>

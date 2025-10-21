@@ -50,3 +50,11 @@ Vote.blueprint do
   user
   vote { 1 }
 end
+
+BlogPost.blueprint do
+  user { User.make!(is_admin: true, is_moderator: true) }
+  title { "Article #{sn}" }
+  body { "Contenu **markdown** #{sn}" }
+  published_at { Time.current }
+  draft { false }
+end
