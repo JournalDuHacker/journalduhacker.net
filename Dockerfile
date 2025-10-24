@@ -1,5 +1,5 @@
-# Ruby 3.3 est compatible avec Rails 8.0
-FROM ruby:3.3
+# Ruby 3.4.7 est compatible avec Rails 8.1
+FROM ruby:3.4.7
 
 # OCI Image labels
 LABEL org.opencontainers.image.source=https://github.com/journalduhacker/journalduhacker.net
