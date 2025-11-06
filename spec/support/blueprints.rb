@@ -20,11 +20,6 @@ Tag.blueprint do
   description { "tag #{sn}" }
 end
 
-# these need to exist for stories to use them
-Tag.destroy_all
-Tag.make!(tag: "tag1")
-Tag.make!(tag: "tag2")
-
 Story.blueprint do
   user_id { User.make!.id }
   title { "story title #{sn}" }
