@@ -1,4 +1,8 @@
 Lobsters::Application.routes.draw do
+  # Health check endpoints for Kubernetes
+  get "/_health/live" => "health#live"
+  get "/_health/ready" => "health#ready"
+
   scope format: "html" do
     root to: "home#index",
       protocol: (Rails.application.config.force_ssl ? "https://" : "http://"),
