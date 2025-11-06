@@ -31,10 +31,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-          --character-set-server=utf8mb4
-          --collation-server=utf8mb4_unicode_ci
-          --innodb-flush-log-at-trx-commit=2
-          --sync-binlog=0
 
     env:
       RAILS_ENV: test
