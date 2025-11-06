@@ -10,25 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
+ActiveRecord::Schema[8.1].define(version: 2025_10_17_085247) do
   create_table "comments", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.text "comment", size: :medium, null: false
+    t.decimal "confidence", precision: 20, scale: 19, default: "0.0", null: false
     t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil
+    t.integer "downvotes", default: 0, null: false
+    t.integer "hat_id"
+    t.boolean "is_deleted", default: false
+    t.boolean "is_dragon", default: false
+    t.boolean "is_from_email", default: false
+    t.boolean "is_moderated", default: false
+    t.text "markeddown_comment", size: :medium
+    t.integer "parent_comment_id"
     t.string "short_id", limit: 10, default: "", null: false
     t.integer "story_id", null: false
-    t.integer "user_id", null: false
-    t.integer "parent_comment_id"
     t.integer "thread_id"
-    t.text "comment", size: :medium, null: false
+    t.datetime "updated_at", precision: nil
     t.integer "upvotes", default: 0, null: false
-    t.integer "downvotes", default: 0, null: false
-    t.decimal "confidence", precision: 20, scale: 19, default: "0.0", null: false
-    t.text "markeddown_comment", size: :medium
-    t.boolean "is_deleted", default: false
-    t.boolean "is_moderated", default: false
-    t.boolean "is_from_email", default: false
-    t.integer "hat_id"
-    t.boolean "is_dragon", default: false
+    t.integer "user_id", null: false
     t.index ["comment"], name: "fulltext_comments", type: :fulltext
     t.index ["confidence"], name: "confidence_idx"
     t.index ["short_id"], name: "short_id", unique: true
@@ -38,47 +38,47 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
   end
 
   create_table "hat_requests", id: :integer, charset: "latin1", force: :cascade do |t|
+    t.text "comment"
     t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.integer "user_id"
     t.string "hat"
     t.string "link"
-    t.text "comment"
+    t.datetime "updated_at", precision: nil
+    t.integer "user_id"
   end
 
   create_table "hats", id: :integer, charset: "latin1", force: :cascade do |t|
     t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.integer "user_id"
     t.integer "granted_by_user_id"
     t.string "hat"
     t.string "link"
+    t.datetime "updated_at", precision: nil
+    t.integer "user_id"
   end
 
   create_table "hidden_stories", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.integer "user_id"
     t.integer "story_id"
+    t.integer "user_id"
     t.index ["user_id", "story_id"], name: "index_hidden_stories_on_user_id_and_story_id", unique: true
   end
 
   create_table "invitation_requests", id: :integer, charset: "latin1", force: :cascade do |t|
     t.string "code"
-    t.boolean "is_verified", default: false
-    t.string "email"
-    t.string "name"
-    t.text "memo"
-    t.string "ip_address"
     t.datetime "created_at", precision: nil, null: false
+    t.string "email"
+    t.string "ip_address"
+    t.boolean "is_verified", default: false
+    t.text "memo"
+    t.string "name"
     t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "invitations", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.integer "user_id"
-    t.string "email"
     t.string "code"
     t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.string "email"
     t.text "memo", size: :medium
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "user_id"
   end
 
   create_table "keystores", id: false, charset: "latin1", force: :cascade do |t|
@@ -88,48 +88,48 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
   end
 
   create_table "messages", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.datetime "created_at", precision: nil
     t.integer "author_user_id"
-    t.integer "recipient_user_id"
-    t.boolean "has_been_read", default: false
-    t.string "subject", limit: 100
     t.text "body", size: :medium
-    t.string "short_id", limit: 30
+    t.datetime "created_at", precision: nil
     t.boolean "deleted_by_author", default: false
     t.boolean "deleted_by_recipient", default: false
+    t.boolean "has_been_read", default: false
+    t.integer "recipient_user_id"
+    t.string "short_id", limit: 30
+    t.string "subject", limit: 100
     t.index ["short_id"], name: "random_hash", unique: true
   end
 
   create_table "moderations", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.integer "moderator_user_id"
-    t.integer "story_id"
-    t.integer "comment_id"
-    t.integer "user_id"
     t.text "action", size: :medium
-    t.text "reason", size: :medium
+    t.integer "comment_id"
+    t.datetime "created_at", precision: nil, null: false
     t.boolean "is_from_suggestions", default: false
+    t.integer "moderator_user_id"
+    t.text "reason", size: :medium
+    t.integer "story_id"
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "user_id"
   end
 
   create_table "stories", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.datetime "created_at", precision: nil
-    t.integer "user_id"
-    t.string "url", limit: 250, default: ""
-    t.string "title", limit: 150, default: "", null: false
-    t.text "description", size: :medium
-    t.string "short_id", limit: 6, default: "", null: false
-    t.boolean "is_expired", default: false, null: false
-    t.integer "upvotes", default: 0, null: false
-    t.integer "downvotes", default: 0, null: false
-    t.boolean "is_moderated", default: false, null: false
-    t.decimal "hotness", precision: 20, scale: 10, default: "0.0", null: false
-    t.text "markeddown_description", size: :medium
-    t.text "story_cache", size: :medium
     t.integer "comments_count", default: 0, null: false
+    t.datetime "created_at", precision: nil
+    t.text "description", size: :medium
+    t.integer "downvotes", default: 0, null: false
+    t.decimal "hotness", precision: 20, scale: 10, default: "0.0", null: false
+    t.boolean "is_expired", default: false, null: false
+    t.boolean "is_moderated", default: false, null: false
+    t.text "markeddown_description", size: :medium
     t.integer "merged_story_id"
-    t.datetime "unavailable_at", precision: nil
+    t.string "short_id", limit: 6, default: "", null: false
+    t.text "story_cache", size: :medium
+    t.string "title", limit: 150, default: "", null: false
     t.string "twitter_id", limit: 20
+    t.datetime "unavailable_at", precision: nil
+    t.integer "upvotes", default: 0, null: false
+    t.string "url", limit: 250, default: ""
+    t.integer "user_id"
     t.boolean "user_is_author", default: false
     t.index ["created_at"], name: "index_stories_on_created_at"
     t.index ["hotness"], name: "hotness_idx"
@@ -149,15 +149,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
 
   create_table "suggested_titles", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "story_id"
-    t.integer "user_id"
     t.string "title", limit: 150, null: false
+    t.integer "user_id"
   end
 
   create_table "tag_filters", id: :integer, charset: "latin1", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
+    t.integer "tag_id"
     t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
-    t.integer "tag_id"
     t.index ["user_id", "tag_id"], name: "user_tag_idx"
   end
 
@@ -168,39 +168,39 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
   end
 
   create_table "tags", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.string "tag", limit: 25, default: "", null: false
     t.string "description", limit: 100
-    t.boolean "privileged", default: false
-    t.boolean "is_media", default: false
-    t.boolean "inactive", default: false
     t.float "hotness_mod", default: 0.0
+    t.boolean "inactive", default: false
+    t.boolean "is_media", default: false
+    t.boolean "privileged", default: false
+    t.string "tag", limit: 25, default: "", null: false
     t.index ["tag"], name: "tag", unique: true
   end
 
   create_table "users", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.string "username", limit: 50
-    t.string "email", limit: 100
-    t.string "password_digest", limit: 75
-    t.datetime "created_at", precision: nil
-    t.boolean "is_admin", default: false
-    t.string "password_reset_token", limit: 75
-    t.string "session_token", limit: 75, default: "", null: false
     t.text "about", size: :medium
-    t.integer "invited_by_user_id"
-    t.boolean "is_moderator", default: false
-    t.boolean "pushover_mentions", default: false
-    t.string "rss_token", limit: 75
-    t.string "mailing_list_token", limit: 75
-    t.integer "mailing_list_mode", default: 0
-    t.integer "karma", default: 0, null: false
     t.datetime "banned_at", precision: nil
     t.integer "banned_by_user_id"
     t.string "banned_reason", limit: 200
+    t.datetime "created_at", precision: nil
     t.datetime "deleted_at", precision: nil
     t.datetime "disabled_invite_at", precision: nil
     t.integer "disabled_invite_by_user_id"
     t.string "disabled_invite_reason", limit: 200
+    t.string "email", limit: 100
+    t.integer "invited_by_user_id"
+    t.boolean "is_admin", default: false
+    t.boolean "is_moderator", default: false
+    t.integer "karma", default: 0, null: false
+    t.integer "mailing_list_mode", default: 0
+    t.string "mailing_list_token", limit: 75
+    t.string "password_digest", limit: 75
+    t.string "password_reset_token", limit: 75
+    t.boolean "pushover_mentions", default: false
+    t.string "rss_token", limit: 75
+    t.string "session_token", limit: 75, default: "", null: false
     t.text "settings"
+    t.string "username", limit: 50
     t.index ["mailing_list_mode"], name: "mailing_list_enabled"
     t.index ["mailing_list_token"], name: "mailing_list_token", unique: true
     t.index ["password_reset_token"], name: "password_reset_token", unique: true
@@ -210,11 +210,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_085247) do
   end
 
   create_table "votes", id: :integer, charset: "latin1", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "story_id", null: false
     t.integer "comment_id"
-    t.integer "vote", limit: 1, null: false
     t.string "reason", limit: 1
+    t.integer "story_id", null: false
+    t.integer "user_id", null: false
+    t.integer "vote", limit: 1, null: false
     t.index ["comment_id"], name: "index_votes_on_comment_id"
     t.index ["user_id", "comment_id"], name: "user_id_comment_id"
     t.index ["user_id", "story_id"], name: "user_id_story_id"
