@@ -40,6 +40,26 @@ Rails.application.configure do
   # Change to "debug" to log everything (including potentially personally-identifiable information!)
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
+  # Enable JSON structured logging with lograge (set RAILS_LOG_JSON=false to disable)
+  config.lograge.enabled = ENV.fetch("RAILS_LOG_JSON", "true") == "true"
+  config.lograge.formatter = Lograge::Formatters::Json.new
+  config.lograge.ignore_actions = ["HealthController#live", "HealthController#ready"]
+  config.lograge.custom_options = lambda do |event|
+    {
+      request_id: event.payload[:request_id],
+      user_id: event.payload[:user_id],
+      ip: event.payload[:ip],
+      time: Time.current.iso8601
+    }
+  end
+  config.lograge.custom_payload do |controller|
+    {
+      request_id: controller.request.request_id,
+      user_id: controller.instance_variable_get(:@user)&.id,
+      ip: controller.request.remote_ip
+    }
+  end
+
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
 

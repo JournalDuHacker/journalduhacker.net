@@ -23,6 +23,9 @@ gem "jquery-rails"
 
 gem "exception_notification"
 
+# JSON structured logging
+gem "lograge"
+
 gem "bcrypt", "~> 3.1.2"
 gem "rotp"
 gem "rqrcode"
