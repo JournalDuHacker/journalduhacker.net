@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
         (user = User.where(session_token: session[:u].to_s).first) &&
         user.is_active?
       @user = user
-      Rails.logger.info "  Logged in as user #{@user.id} (#{@user.username})"
+      Rails.logger.debug "  Logged in as user #{@user.id} (#{@user.username})"
     end
 
     true
@@ -50,12 +50,12 @@ class ApplicationController < ActionController::Base
       date_kv.value = now_i
       date_kv.save!
 
-      Rails.logger.info "  Traffic level: #{@traffic.to_i}"
+      Rails.logger.debug "  Traffic level: #{@traffic.to_i}"
     end
 
     intensity = (@traffic * 7).floor + 50.0
     if (blue = (rand(2000000) == 1)) && @user
-      Rails.logger.info "  User #{@user.id} (#{@user.username}) saw blue logo"
+      Rails.logger.debug "  User #{@user.id} (#{@user.username}) saw blue logo"
     end
     color = (blue ? "0000%02x" : "%02x0000")
     @traffic_color = sprintf(color, (intensity > 255) ? 255 : intensity)
