@@ -129,6 +129,11 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
+    lograge (0.14.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -231,6 +236,8 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     rotp (6.3.0)
     rqrcode (3.1.0)
       chunky_png (~> 1.0)
@@ -341,6 +348,7 @@ DEPENDENCIES
   importmap-rails
   jquery-rails
   listen (~> 3.2)
+  lograge
   machinist
   mail
   mysql2 (>= 0.5.4, < 0.6)
