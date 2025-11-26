@@ -261,7 +261,7 @@ class CommentsController < ApplicationController
           @title = "Private comments feed for #{@user.username}"
         end
 
-        render action: "index.rss", layout: false
+        render action: "index", layout: false
       }
     end
   end
