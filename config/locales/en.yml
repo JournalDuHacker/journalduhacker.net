@@ -297,6 +297,10 @@ en:
       points: "Points"
       searchresults : "%{searchnumber} result%{plural} for \"%{query}\""
       searchplural: "s"
+      search_tips_title: "Search tips"
+      search_tips_html: |
+        <code>submitter:username</code> — search posts by a user<br>
+        <code>domain:example.com</code> — search links from a domain
   settings:
     delete_account:
       deleteaccountflash: "Your account has been deleted."

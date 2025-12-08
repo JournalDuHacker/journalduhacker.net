@@ -43,6 +43,13 @@
       <%= radio_button_tag "order", "points", @search.order == "points" %>
         <label for="order_points" class="normal"><%= t('.points') %></label>
     </div>
+
+    <div class="boxline search_tips">
+      <details>
+        <summary><%= t('.search_tips_title') %></summary>
+        <p><%= raw t('.search_tips_html') %></p>
+      </details>
+    </div>
   <% end %>
 </div>
 

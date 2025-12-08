@@ -328,6 +328,10 @@ fr:
       points: "Score"
       searchresults : "%{searchnumber} résultat%{plural} pour \"%{query}\""
       searchplural: "s"
+      search_tips_title: "Astuces de recherche"
+      search_tips_html: |
+        <code>submitter:username</code> — rechercher les publications d'un utilisateur<br>
+        <code>domain:example.com</code> — rechercher les liens d'un domaine
   settings:
     delete_account:
       deleteaccountflash: "Votre compte a été supprimé."

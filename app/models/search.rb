@@ -46,13 +46,28 @@ class Search
   end
 
   def search_for_user!(user)
-    # Extract domain query since it must be done separately
+    # Extract special search operators
     domain = nil
+    submitter = nil
     words = q.to_s.split(" ").reject { |w|
       if (m = w.match(/^domain:(.+)$/))
         domain = m[1]
+      elsif (m = w.match(/^submitter:(.+)$/i))
+        submitter = m[1]
       end
     }.join(" ")
+
+    # Handle submitter search - find user by username
+    submitter_user = nil
+    if submitter.present?
+      submitter_user = User.find_by("LOWER(username) = ?", submitter.downcase)
+      if submitter_user.nil? && words.blank? && domain.blank?
+        self.results = []
+        self.total_results = 0
+        self.page = 0
+        return false
+      end
+    end
 
     # Handle domain search
     story_ids = []
@@ -80,18 +95,20 @@ class Search
       end
     end
 
-    # Escape query for FULLTEXT search
-    query = ActiveRecord::Base.connection.quote_string(words)
+    # Sanitize query for FULLTEXT BOOLEAN MODE
+    # Escape special characters that have meaning in boolean mode
+    sanitized_words = sanitize_fulltext_query(words)
+    query = ActiveRecord::Base.connection.quote_string(sanitized_words)
 
     # Build search based on 'what' parameter
     results_array = []
 
     if what == "all" || what == "stories"
-      results_array.concat(search_stories(query, story_ids))
+      results_array.concat(search_stories(query, story_ids, submitter_user))
     end
 
     if what == "all" || what == "comments"
-      results_array.concat(search_comments(query))
+      results_array.concat(search_comments(query, submitter_user))
     end
 
     # Sort results
@@ -145,11 +162,16 @@ class Search
 
   private
 
-  def search_stories(query, story_ids = [])
-    # Return empty if no query AND no story_ids (domain search)
-    return [] if query.blank? && story_ids.empty?
+  def search_stories(query, story_ids = [], submitter_user = nil)
+    # Return empty if no query AND no story_ids AND no submitter
+    return [] if query.blank? && story_ids.empty? && submitter_user.nil?
 
     relation = Story.joins(:user).where(is_expired: false)
+
+    # Filter by submitter if specified
+    if submitter_user
+      relation = relation.where(user_id: submitter_user.id)
+    end
 
     # Filter by story_ids if domain search
     if story_ids.any?
@@ -162,23 +184,43 @@ class Search
         .where("MATCH(stories.title, stories.description, stories.url) AGAINST(? IN BOOLEAN MODE)", query)
         .select("stories.*, MATCH(stories.title, stories.description, stories.url) AGAINST('#{query}' IN BOOLEAN MODE) as relevance")
     else
-      # Domain-only search: no relevance score
+      # Domain-only or submitter-only search: no relevance score
       relation.select("stories.*, 0 as relevance")
     end
 
     relation.includes(:user, :tags).to_a
   end
 
-  def search_comments(query)
-    return [] if query.blank?
+  def search_comments(query, submitter_user = nil)
+    # Return empty if no query AND no submitter
+    return [] if query.blank? && submitter_user.nil?
 
-    Comment.joins(:user, :story)
+    relation = Comment.joins(:user, :story)
       .where(is_deleted: false, is_moderated: false)
-      .where("MATCH(comment) AGAINST(? IN BOOLEAN MODE)", query)
-      .select("comments.*,
-        MATCH(comment) AGAINST('#{query}' IN BOOLEAN MODE) as relevance")
-      .includes(:user, :story)
-      .to_a
+
+    # Filter by submitter if specified
+    if submitter_user
+      relation = relation.where(user_id: submitter_user.id)
+    end
+
+    # Add FULLTEXT search only if we have a query
+    relation = if query.present?
+      relation
+        .where("MATCH(comment) AGAINST(? IN BOOLEAN MODE)", query)
+        .select("comments.*, MATCH(comment) AGAINST('#{query}' IN BOOLEAN MODE) as relevance")
+    else
+      # Submitter-only search: no relevance score
+      relation.select("comments.*, 0 as relevance")
+    end
+
+    relation.includes(:user, :story).to_a
+  end
+
+  def sanitize_fulltext_query(query)
+    # In MySQL FULLTEXT BOOLEAN MODE, certain characters have special meaning:
+    # + = must include, - = must exclude, * = wildcard, " = phrase, etc.
+    # We escape these to treat them as literal characters
+    query.to_s.gsub(/[+\-<>()~*"]/, " ")
   end
 
   def sort_results(results)
