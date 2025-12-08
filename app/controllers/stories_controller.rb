@@ -326,6 +326,40 @@ class StoriesController < ApplicationController
     render text: "ok"
   end
 
+  def lock_comments
+    if !@user&.is_admin?
+      return render text: "not permitted", status: 403
+    end
+
+    if !(story = find_story)
+      return render text: "can't find story", status: 400
+    end
+
+    story.comments_locked = true
+    story.editor = @user
+    story.moderation_reason = params[:reason] if params[:reason].present?
+    story.save(validate: false)
+
+    redirect_to story.comments_path
+  end
+
+  def unlock_comments
+    if !@user&.is_admin?
+      return render text: "not permitted", status: 403
+    end
+
+    if !(story = find_story)
+      return render text: "can't find story", status: 400
+    end
+
+    story.comments_locked = false
+    story.editor = @user
+    story.moderation_reason = params[:reason] if params[:reason].present?
+    story.save(validate: false)
+
+    redirect_to story.comments_path
+  end
+
   private
 
   def story_params

@@ -409,6 +409,10 @@ class Story < ApplicationRecord
     is_expired?
   end
 
+  def accepting_comments?
+    !is_gone? && !comments_locked?
+  end
+
   def is_hidden_by_user?(user)
     !!HiddenStory.where(user_id: user.id, story_id: id).first
   end
@@ -462,6 +466,10 @@ class Story < ApplicationRecord
       I18n.t("models.story.deletedstory")
     elsif all_changes["is_expired"] && !is_expired?
       I18n.t("models.story.undeletedstory")
+    elsif all_changes["comments_locked"] && comments_locked?
+      I18n.t("models.story.lockedcomments")
+    elsif all_changes["comments_locked"] && !comments_locked?
+      I18n.t("models.story.unlockedcomments")
     else
       all_changes.map { |k, v|
         if k == "merged_story_id"

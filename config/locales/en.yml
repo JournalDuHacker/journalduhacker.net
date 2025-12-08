@@ -42,6 +42,8 @@ en:
     story:
       deletedstory: "deleted story"
       undeletedstory: "undeleted story"
+      lockedcomments: "comments locked"
+      unlockedcomments: "comments unlocked"
       mergedinto: "merged into %{shortid} (%{title})"
       unmerged: "unmerged from another story"
       changedfromto: "changed %{story} from %{stfrom} to %{stto}"
@@ -466,6 +468,8 @@ en:
       hide: "hide"
       unhide: "unhide"
       cached: "cached"
+      lock_comments: "lock comments"
+      unlock_comments: "unlock comments"
       nocomment: "no comment"
       commentsingular: "comment"
       commentplurial: "comments"
@@ -477,6 +481,7 @@ en:
       submitbutton: "Submit"
     show:
       toggledragons: "&mdash; here be dragons &mdash;"
+      comments_locked: "Comments are locked for this story."
   users:
     list:
       administrator: "administrator"

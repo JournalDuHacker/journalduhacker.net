@@ -74,8 +74,10 @@
 
 <% if !@story.previewing %>
   <ol class="comments comments1">
-    <% if !@story.is_gone? && !@story.previewing %>
+    <% if @story.accepting_comments? && !@story.previewing %>
       <li><%= render "comments/commentbox", :comment => @comment %></li>
+    <% elsif @story.comments_locked? && !@story.is_gone? %>
+      <li class="comments_locked_notice"><%= t('stories.show.comments_locked') %></li>
     <% end %>
 
     <% comments_by_parent = @comments.group_by(&:parent_comment_id) %>

@@ -15,6 +15,10 @@ class CommentsController < ApplicationController
       return render text: "can't find story", status: 400
     end
 
+    if !story.accepting_comments?
+      return render text: "comments are locked", status: 403
+    end
+
     comment = story.comments.build
     comment.comment = params[:comment].to_s
     comment.user = @user
@@ -95,6 +99,10 @@ class CommentsController < ApplicationController
   def reply
     if !(parent_comment = find_comment)
       return render text: "can't find comment", status: 400
+    end
+
+    if !parent_comment.story.accepting_comments?
+      return render text: "comments are locked", status: 403
     end
 
     comment = Comment.new

@@ -68,6 +68,8 @@ Lobsters::Application.routes.draw do
       post "undelete"
       post "hide"
       post "unhide"
+      post "lock_comments"
+      post "unlock_comments"
       get "suggest"
       post "suggest", action: "submit_suggestions"
     end

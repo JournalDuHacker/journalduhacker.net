@@ -74,6 +74,8 @@ fr:
     story:
       deletedstory: "info effacée"
       undeletedstory: "info rétablie"
+      lockedcomments: "commentaires fermés"
+      unlockedcomments: "commentaires ouverts"
       mergedinto: "mergée avec %{shortid} (%{title})"
       unmerged: "dé-fusionnée depuis une autre info"
       changedfromto: "%{story} changée de %{stfrom} à %{stto}"
@@ -497,6 +499,8 @@ fr:
       hide: "masquer"
       unhide: "révéler"
       cached: "en cache"
+      lock_comments: "fermer le fil"
+      unlock_comments: "ouvrir le fil"
       nocomment: "pas de commentaire"
       commentsingular: "commentaire"
       commentplurial: "commentaires"
@@ -508,6 +512,7 @@ fr:
       submitbutton: "Soumettre"
     show:
       toggledragons: "&mdash; voici les dragons &mdash;"
+      comments_locked: "Les commentaires sont fermés pour cette info."
   users:
     list:
       administrator: "administrateur"

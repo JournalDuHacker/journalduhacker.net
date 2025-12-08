@@ -168,6 +168,16 @@ class="story <%= story.vote && story.vote[:vote] == 1 ? "upvoted" : "" %>
           <a href="<%= story.archive_url %>" rel="nofollow"
             target="_new"><%= t('.cached') %></a>
         <% end %>
+        <% if @user&.is_admin? && !story.is_gone? %>
+          |
+          <% if story.comments_locked? %>
+            <%= link_to t('.unlock_comments'), story_unlock_comments_path(story.short_id),
+              :method => :post, :class => "mod_story_link" %>
+          <% else %>
+            <%= link_to t('.lock_comments'), story_lock_comments_path(story.short_id),
+              :method => :post, :class => "mod_story_link" %>
+          <% end %>
+        <% end %>
         <% if !story.is_gone? %>
           <span class="comments_label">
             |

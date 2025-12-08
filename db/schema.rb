@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_17_085247) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_08_100000) do
   create_table "comments", id: :integer, charset: "latin1", force: :cascade do |t|
     t.text "comment", size: :medium, null: false
     t.decimal "confidence", precision: 20, scale: 19, default: "0.0", null: false
@@ -114,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_17_085247) do
 
   create_table "stories", id: :integer, charset: "latin1", force: :cascade do |t|
     t.integer "comments_count", default: 0, null: false
+    t.boolean "comments_locked", default: false, null: false
     t.datetime "created_at", precision: nil
     t.text "description", size: :medium
     t.integer "downvotes", default: 0, null: false
