@@ -59,16 +59,20 @@ class Search
     if domain.present?
       self.what = "stories"
       begin
-        reg = Regexp.new("//([^/]*.)?#{domain}/")
+        # Escape domain for regex special characters (dots, etc.)
+        escaped_domain = Regexp.escape(domain)
+        # Pattern: matches //domain or //subdomain.domain followed by / or ? or end of string
+        reg = Regexp.new("//([^/]*\\.)?#{escaped_domain}(/|\\?|$)")
       rescue RegexpError
         return false
       end
 
-      story_ids = Story.select(:id).where("`url` REGEXP '" +
-        ActiveRecord::Base.connection.quote_string(reg.source) + "'")
-        .collect(&:id)
+      story_ids = Story.select(:id)
+        .where("`url` REGEXP ?", reg.source)
+        .limit(max_matches)
+        .pluck(:id)
 
-      if story_ids.empty?
+      if story_ids.empty? && words.blank?
         self.results = []
         self.total_results = 0
         self.page = 0
@@ -142,21 +146,27 @@ class Search
   private
 
   def search_stories(query, story_ids = [])
-    return [] if query.blank?
+    # Return empty if no query AND no story_ids (domain search)
+    return [] if query.blank? && story_ids.empty?
 
-    relation = Story.joins(:user)
-      .where(is_expired: false)
-      .where("MATCH(stories.title, stories.description, stories.url) AGAINST(? IN BOOLEAN MODE)", query)
+    relation = Story.joins(:user).where(is_expired: false)
 
     # Filter by story_ids if domain search
     if story_ids.any?
       relation = relation.where(id: story_ids)
     end
 
-    relation.select("stories.*,
-      MATCH(stories.title, stories.description, stories.url) AGAINST('#{query}' IN BOOLEAN MODE) as relevance")
-      .includes(:user, :tags)
-      .to_a
+    # Add FULLTEXT search only if we have a query
+    relation = if query.present?
+      relation
+        .where("MATCH(stories.title, stories.description, stories.url) AGAINST(? IN BOOLEAN MODE)", query)
+        .select("stories.*, MATCH(stories.title, stories.description, stories.url) AGAINST('#{query}' IN BOOLEAN MODE) as relevance")
+    else
+      # Domain-only search: no relevance score
+      relation.select("stories.*, 0 as relevance")
+    end
+
+    relation.includes(:user, :tags).to_a
   end
 
   def search_comments(query)
