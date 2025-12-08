@@ -43,8 +43,12 @@
                 <%= message.author_username %>
               <% end %>
             <% else %>
-              <a href="/u/<%= message.recipient.username %>"><%=
-                message.recipient.username %></a>
+              <% if message.recipient %>
+                <a href="/u/<%= message.recipient.username %>"><%=
+                  message.recipient.username %></a>
+              <% else %>
+                [utilisateur supprimé]
+              <% end %>
             <% end %></td>
           <td><%= distance_of_time_in_words(message.created_at, Time.now) %></td>
           <td><a href="/messages/<%= message.short_id %>"><%= message.subject
