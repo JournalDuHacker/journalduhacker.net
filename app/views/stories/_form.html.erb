@@ -38,7 +38,7 @@
 
   <div class="boxline">
     <%= f.label :title, t('.title'), :class => "required" %>
-    <%= f.text_field :title, :maxlength => 100 %>
+    <%= f.text_field :title, :maxlength => 150 %>
   </div>
 
   <% if f.object.id && !defined?(suggesting) %>
