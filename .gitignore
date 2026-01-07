@@ -24,6 +24,7 @@ upstream-patches
 app/views/home/404.*
 app/views/layouts/_footer.*
 app/assets/stylesheets/local/*
+public/favicon.ico
 
 # files added in production
 lib/tasks/deploy.rake
