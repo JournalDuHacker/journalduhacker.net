@@ -27,7 +27,7 @@ class UsersController < ApplicationController
         @title << " By Karma"
         render_to_string action: "list", layout: nil
       }
-      render text: content, layout: "application"
+      render html: content.html_safe, layout: "application"
     elsif params[:moderators]
       @users = User.where("is_admin = ? OR is_moderator = ?", true, true)
         .order("id ASC").to_a
@@ -43,7 +43,7 @@ class UsersController < ApplicationController
         @newest = User.order("id DESC").limit(10)
         render_to_string action: "tree", layout: nil
       }
-      render text: content, layout: "application"
+      render html: content.html_safe, layout: "application"
     end
   end
 
