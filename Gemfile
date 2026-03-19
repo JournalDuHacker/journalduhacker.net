@@ -26,7 +26,7 @@ gem "exception_notification"
 # JSON structured logging
 gem "lograge"
 
-gem "bcrypt", "~> 3.1.2"
+gem "bcrypt", "~> 3.1.22"
 gem "rotp"
 gem "rqrcode"
 
