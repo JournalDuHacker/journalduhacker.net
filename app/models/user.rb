@@ -34,7 +34,7 @@ class User < ApplicationRecord
     source: :story
   has_many :hats
 
-  has_secure_password
+  has_secure_password reset_token: false
 
   typed_store :settings do |s|
     s.boolean :email_notifications, default: false
