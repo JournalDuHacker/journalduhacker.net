@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.1.0"
+gem "rails", "~> 8.1.3"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -9,7 +9,7 @@ gem "sprockets-rails"
 gem "bootsnap", ">= 1.4.2", require: false
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.0"
+gem "puma", "~> 7.2.1"
 
 gem "mysql2", ">= 0.5.4", "< 0.6"
 

@@ -421,7 +421,7 @@ class Comment < ApplicationRecord
   end
 
   def score
-    self.upvotes - self.downvotes
+    upvotes - downvotes
   end
 
   def score_for_user(u)

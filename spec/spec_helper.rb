@@ -3,17 +3,17 @@
 # SimpleCov configuration for code coverage
 require "simplecov"
 SimpleCov.start "rails" do
-  add_filter "/spec/"
-  add_filter "/config/"
-  add_filter "/vendor/"
+  skip "/spec/"
+  skip "/config/"
+  skip "/vendor/"
 
-  add_group "Models", "app/models"
-  add_group "Controllers", "app/controllers"
-  add_group "Helpers", "app/helpers"
-  add_group "Mailers", "app/mailers"
-  add_group "Jobs", "app/jobs"
+  group "Models", "app/models"
+  group "Controllers", "app/controllers"
+  group "Helpers", "app/helpers"
+  group "Mailers", "app/mailers"
+  group "Jobs", "app/jobs"
 
-  track_files "{app,lib}/**/*.rb"
+  cover "{app,lib}/**/*.rb"
 end
 
 # Monkey patch for Ruby 3.x compatibility with Machinist
