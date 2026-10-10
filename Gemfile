@@ -48,7 +48,7 @@ gem "mail"
 group :test, :development do
   gem "rspec-rails", "~> 6.0"
   gem "machinist"
-  gem "sqlite3", "~> 2.0"
+  gem "sqlite3", "~> 2.9"
   gem "faker"
   gem "listen", "~> 3.2"
   gem "standard", require: false
